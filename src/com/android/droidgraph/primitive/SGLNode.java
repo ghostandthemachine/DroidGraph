@@ -1,12 +1,7 @@
 package com.android.droidgraph.primitive;
 
 import java.nio.FloatBuffer;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
-
-import com.android.droidgraph.event.GLFocusListener;
-import com.android.droidgraph.event.GLTouchListener;
 
 public abstract class SGLNode {
 
@@ -21,10 +16,6 @@ public abstract class SGLNode {
 
 	private Object parent;
 	private Map<String, Object> attributeMap;
-
-	private List<GLTouchListener> touchListeners = null;
-
-	private List<GLFocusListener> focusListeners = Collections.EMPTY_LIST;
 
 	private boolean visible = true;
 

@@ -11,10 +11,12 @@ import javax.microedition.khronos.opengles.GL10;
 import android.view.MotionEvent;
 
 import com.android.droidgraph.event.GraphNodeEvent;
-import com.android.droidgraph.event.TranslationEvent;
 import com.android.droidgraph.geom.BoundingBox;
 import com.android.droidgraph.geom.Bounds;
 import com.android.droidgraph.geom.Transform3D;
+import com.android.droidgraph.material.IMaterial;
+import com.android.droidgraph.material.Material;
+import com.android.droidgraph.material.TextureMaterial;
 import com.android.droidgraph.util.GLH;
 import com.android.droidgraph.util.PrintLogUtil;
 import com.android.droidgraph.vecmath.Point3d;

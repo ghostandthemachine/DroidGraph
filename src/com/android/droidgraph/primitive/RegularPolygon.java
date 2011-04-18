@@ -7,12 +7,9 @@ import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import android.content.Context;
 import android.util.Log;
 
-import com.android.droidgraph.geom.BoundingBox;
 import com.android.droidgraph.shape.GLShape;
-import com.android.droidgraph.vecmath.Point3d;
 
 public class RegularPolygon extends GLShape {
 
@@ -28,9 +25,6 @@ public class RegularPolygon extends GLShape {
 	private float[] sarray = null;
 	private float[] tarray = null;
 	
-	Point3d lower = new Point3d();
-	Point3d upper = new Point3d();
-
 	public RegularPolygon(float tx, float ty, float tz, float r, int numsides) {
 
 		cx = tx;
@@ -338,34 +332,6 @@ public class RegularPolygon extends GLShape {
 	public int getNumberOfSides() {
 		return sides;
 	}
-	
-	@Override
-	public BoundingBox getBounds() {
-		calculateBoundsVerts();
-		BoundingBox bounds = new BoundingBox();
-		bounds.setLower(lower);
-		bounds.setUpper(upper);
-		return bounds;
-	}
-
-	private void calculateBoundsVerts() {
-		for (int i = 0; i < xarray.length; i++) {
-			if (xarray[i] < lower.x) {
-				lower.x = xarray[i];
-			} else if(xarray[i] > upper.x) {
-				upper.x = xarray[i];
-			}
-			
-			if(yarray[i] < lower.y) {
-				lower.y = yarray[i];
-			} else if(yarray[i] > upper.y) {
-				upper.y = yarray[i];
-			} 
-			
-			upper.z = 0;
-			lower.z = 0;
-		}
-	}
 
 	@Override
 	public void draw(GL10 gl) {
@@ -374,7 +340,7 @@ public class RegularPolygon extends GLShape {
 	}
 
 	@Override
-	public void loadGLTexture(GL10 gl, Context context) {
+	public void loadGLTexture() {
 		// TODO Auto-generated method stub
 		
 	}

@@ -6,11 +6,7 @@ import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import android.content.Context;
-
-import com.android.droidgraph.geom.BoundingBox;
 import com.android.droidgraph.shape.GLShape;
-import com.android.droidgraph.vecmath.Point3d;
 
 /**
  * 
@@ -22,9 +18,6 @@ public class Pyramid extends GLShape {
 	private FloatBuffer vertexBuffer;
 	/** The buffer holding the color values */
 	private FloatBuffer colorBuffer;
-
-	Point3d lower = new Point3d();
-	Point3d upper = new Point3d();
 
 	/** The initial vertex definition */
 	private float vertices[] = { 0.0f, 1.0f, 0.0f, // Top Of Triangle (Front)
@@ -44,24 +37,26 @@ public class Pyramid extends GLShape {
 			-1f, -1f, 1f, // Bottom - front right
 			1f, -1f, 1f, -1f, -1f, -1f, 1f, -1f, -1f };
 	/** The initial color definition */
-	private float colors[] = { 1.0f, 0.0f, 0.0f, 1.0f, // Red
+	private float colors[] = { 
 			0.0f, 1.0f, 0.0f, 1.0f, // Green
-			0.0f, 0.0f, 1.0f, 1.0f, // Blue
-			1.0f, 0.0f, 0.0f, 1.0f, // Red
-			0.0f, 0.0f, 1.0f, 1.0f, // Blue
 			0.0f, 1.0f, 0.0f, 1.0f, // Green
-			1.0f, 0.0f, 0.0f, 1.0f, // Red
 			0.0f, 1.0f, 0.0f, 1.0f, // Green
-			0.0f, 0.0f, 1.0f, 1.0f, // Blue
-			1.0f, 0.0f, 0.0f, 1.0f, // Red
-			0.0f, 0.0f, 1.0f, 1.0f, // Blue
 			0.0f, 1.0f, 0.0f, 1.0f, // Green
-			1.0f, 0.0f, 0.0f, 1.0f, // Red
-			0.0f, 0.0f, 1.0f, 1.0f, // Blue
 			0.0f, 1.0f, 0.0f, 1.0f, // Green
-			1.0f, 0.0f, 0.0f, 1.0f, // Red
-			0.0f, 0.0f, 1.0f, 1.0f, // Blue
-			0.0f, 1.0f, 0.0f, 1.0f // Green
+			0.0f, 1.0f, 0.0f, 1.0f, // Green
+			0.0f, 1.0f, 0.0f, 1.0f, // Green
+			0.0f, 1.0f, 0.0f, 1.0f, // Green
+			0.0f, 1.0f, 0.0f, 1.0f, // Green
+			0.0f, 1.0f, 0.0f, 1.0f, // Green
+			0.0f, 1.0f, 0.0f, 1.0f, // Green
+			0.0f, 1.0f, 0.0f, 1.0f, // Green
+			0.0f, 1.0f, 0.0f, 1.0f, // Green
+			0.0f, 1.0f, 0.0f, 1.0f, // Green
+			0.0f, 1.0f, 0.0f, 1.0f, // Green
+			0.0f, 1.0f, 0.0f, 1.0f, // Green
+			0.0f, 1.0f, 0.0f, 1.0f, // Green
+			0.0f, 1.0f, 0.0f, 1.0f, // Green
+			0.0f, 1.0f, 0.0f, 1.0f, // Green
 	};
 
 	/**
@@ -96,6 +91,9 @@ public class Pyramid extends GLShape {
 		// Set the face rotation
 		gl.glFrontFace(GL10.GL_CW);
 
+		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+		gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
+
 		// Point to our buffers
 		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer);
 		gl.glColorPointer(4, GL10.GL_FLOAT, 0, colorBuffer);
@@ -112,23 +110,30 @@ public class Pyramid extends GLShape {
 		gl.glDisableClientState(GL10.GL_COLOR_ARRAY);
 	}
 
-	@Override
-	public BoundingBox getBounds() {
-		calculateBoundsVerts();
-		BoundingBox bounds = new BoundingBox();
-		bounds.setLower(lower);
-		bounds.setUpper(upper);
-		return bounds;
-	}
-
-	private void calculateBoundsVerts() {
-		lower.set(-1d, -1d, -1d);
-		upper.set(1d, 1d, 1d);
+	public void setColor(float r, float g, float b, float a) {
+		colorBuffer.position(0);
+		for (int i = 0; i < 18; i++) {
+			colorBuffer.put(r);
+			colorBuffer.put(g);
+			colorBuffer.put(b);
+			colorBuffer.put(a);
+		}
+		colorBuffer.position(0);
 	}
 
 	@Override
-	public void loadGLTexture(GL10 gl, Context context) {
+	public void loadGLTexture() {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	public FloatBuffer getColorBuffer() {
+		return colorBuffer;
+	}
+
+	@Override
+	public FloatBuffer getTextureBuffer() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -17,7 +17,9 @@ public class TextureLoader {
 	
 	public void loadTexture(GL10 gl, Context context) {
 		//Load the texture for the cube once during Surface creation
-		primitive.loadGLTexture(gl, context);
+//		primitive.loadGLTexture(gl, context);
+		
+		
 	}
 	
 	

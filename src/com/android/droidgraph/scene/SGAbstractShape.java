@@ -1,9 +1,14 @@
 package com.android.droidgraph.scene;
 
+import java.util.ArrayList;
+
 import javax.microedition.khronos.opengles.GL10;
+
+import android.content.Context;
 
 import com.android.droidgraph.geom.BoundingBox;
 import com.android.droidgraph.geom.Transform3D;
+import com.android.droidgraph.material.Material;
 import com.android.droidgraph.shape.GLShape;
 import com.android.droidgraph.util.SGColor;
 
@@ -13,49 +18,41 @@ public abstract class SGAbstractShape extends SGLeaf {
 		STROKE, FILL, STROKE_FILL
 	};
 
-	Mode mode = Mode.FILL;
-	SGColor drawPaint = new SGColor(255, 255, 255, 255);
-	SGColor fillPaint = new SGColor(0, 0, 0, 255);
+	protected ArrayList<Material> materials = new ArrayList<Material>();
+	
+	private boolean hasTexture = false;;
 	
 	
 	public SGAbstractShape() {
+		this(false);
 	}
 	
+	public SGAbstractShape(boolean hasTex) {
+		hasTexture = hasTex;
+	}
 
 	public abstract GLShape getShape();
-
-	public final Mode getMode() {
-		return mode;
+	
+	public void load(GL10 gl){
+		loadMaterials(gl);
 	}
 
-	public final void setMode(Mode mode) {
-		if (mode == null) {
-			throw new IllegalArgumentException("null mode");
-		}
-		this.mode = mode;
+	public final Material[] getMaterial() {
+		return (Material[]) materials.toArray();
 	}
 
-	public final SGColor getDrawPaint() {
-		return drawPaint;
+	public void addMaterial(Material material) {
+		addMaterial(0, material);
 	}
-
-	public void setDrawPaint(SGColor drawPaint) {
-		if (drawPaint == null) {
-			throw new IllegalArgumentException("null drawPaint");
-		}
-		this.drawPaint = drawPaint;
+	
+	public void addMaterial(int position, Material material) {
+		materials.add(position, material);
+	}	
+	
+	public void removeMaterial(Material material) {
+		materials.remove(material);
 	}
-
-	public final SGColor getFillPaint() {
-		return fillPaint;
-	}
-
-	public void setFillPaint(SGColor fillPaint) {
-		if (fillPaint == null) {
-			throw new IllegalArgumentException("null fillPaint");
-		}
-		this.fillPaint = fillPaint;
-	}
+	
 
 	@Override
 	public void paint(GL10 gl) {
@@ -66,4 +63,20 @@ public abstract class SGAbstractShape extends SGLeaf {
 		return null;
 	}
 	
+	private void loadMaterials(GL10 gl) {
+		if(materials != null) {
+			for(Material material : materials) {
+				material.loadMaterial(gl);
+				log.pl("SGAbstractShape", "loadTexture(gl)");
+			}
+		}
+	}
+	
+	public void setHasTexture(boolean b) {
+		hasTexture = b;
+	}
+	
+	public boolean hasTexture() {
+		return hasTexture;
+	}
 }

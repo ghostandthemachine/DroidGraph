@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
     <string name="hello">Hello World, Run!</string>
-    <string name="app_name">DroidGraphTest</string>
+    <string name="app_name">DroidGraph Test</string>
 </resources>

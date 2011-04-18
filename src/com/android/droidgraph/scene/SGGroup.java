@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import com.android.droidgraph.geom.BoundingBox;
 import com.android.droidgraph.geom.Bounds;
 import com.android.droidgraph.geom.Transform3D;
@@ -102,6 +104,17 @@ public class SGGroup extends SGParent {
 
 	public long getLifeTime() {
 		return lifetime;
+	}
+
+	public void load(GL10 gl) {
+		if(children != null) {
+			for(SGNode child : children) {
+				if(child instanceof SGShape) {
+					((SGShape) child).load(gl);
+					log.pl("SGGroup", "load(gl)");
+				}
+			}
+		}
 	}
 
 

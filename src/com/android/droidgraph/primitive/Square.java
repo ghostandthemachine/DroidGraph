@@ -6,11 +6,7 @@ import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import android.content.Context;
-
-import com.android.droidgraph.geom.BoundingBox;
 import com.android.droidgraph.shape.GLShape;
-import com.android.droidgraph.vecmath.Point3d;
 
 /**
  * This class is an object representation of 
@@ -94,14 +90,15 @@ public class Square extends GLShape{
 	}
 
 	@Override
-	public BoundingBox getBounds() {
-		return new BoundingBox(new Point3d(vertices[0], vertices[1], vertices[2]), new Point3d(vertices[3], vertices[4], vertices[5]));
+	public void loadGLTexture() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
-	public void loadGLTexture(GL10 gl, Context context) {
+	public FloatBuffer getTextureBuffer() {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	

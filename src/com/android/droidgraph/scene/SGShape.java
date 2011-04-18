@@ -1,11 +1,14 @@
 package com.android.droidgraph.scene;
 
+import java.util.ArrayList;
+
 import javax.microedition.khronos.opengles.GL10;
 
 import android.graphics.drawable.shapes.Shape;
 
 import com.android.droidgraph.geom.BoundingBox;
 import com.android.droidgraph.geom.Transform3D;
+import com.android.droidgraph.material.Material;
 import com.android.droidgraph.shape.GLShape;
 import com.android.droidgraph.vecmath.Point3d;
 
@@ -59,6 +62,10 @@ public class SGShape extends SGAbstractShape {
 		this.shape = shape;
 		this.cachedStrokeShape = null;
 		accumulate(shape);
+		
+		if (this.hasTexture()) {
+			shape.loadGLTexture();
+		}
 	}
 
 	@Override
@@ -67,7 +74,28 @@ public class SGShape extends SGAbstractShape {
 			return;
 		}
 		
+		/*
+		 * Materials
+		 */
+		if (materials != null) {
+			final ArrayList<Material> ms = materials;
+			for (Material material : ms) {
+				material.draw(gl);
+
+			}
+		}
+		
 		shape.draw(gl);
+		
+		/*
+		 * Finish up material calls
+		 */
+		if (materials != null) {
+			final ArrayList<Material> ms = materials;
+			for (Material material : ms) {
+				material.killDraw(gl);
+			}
+		}
 
 		// update lifetime
 		lifetime++;

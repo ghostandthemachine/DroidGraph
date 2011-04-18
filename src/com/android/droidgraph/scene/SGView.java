@@ -7,6 +7,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 
 import com.android.droidgraph.util.PrintLogUtil;
+import com.android.droidgraph.util.Settings;
 
 public class SGView extends GLSurfaceView {
 	
@@ -22,7 +23,9 @@ public class SGView extends GLSurfaceView {
 	public SGView(Context context) {
 		super(context);
 		mRenderer = new SGViewRenderer(this);
+		mRenderer.setContext(context);
 		setRenderer(mRenderer);
+		Settings.setContext(context);
 	}
 
 	@Override
@@ -124,6 +127,12 @@ public class SGView extends GLSurfaceView {
 				sb.append(";");
 		}
 		sb.append("]");
-		Log.d("TouchEvent info", sb.toString());
+//		Log.d("TouchEvent info", sb.toString());
+		
+		if(actionCode == MotionEvent.ACTION_POINTER_DOWN) {
+			Settings.lightStudio.disable();
+		} else if (actionCode == MotionEvent.ACTION_POINTER_UP) {
+			Settings.lightStudio.enable();
+		}
 	}
 }

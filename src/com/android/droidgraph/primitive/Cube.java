@@ -1,18 +1,12 @@
 package com.android.droidgraph.primitive;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
-import javax.microedition.khronos.opengles.GL11;
 
-import android.R;
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.opengl.GLUtils;
 
 import com.android.droidgraph.geom.BoundingBox;
@@ -25,7 +19,6 @@ import com.android.droidgraph.shape.GLShape;
  * and drawing functionality, which is called 
  * by the renderer.
  * 
- * @author Savas Ziplies (nea/INsanityDesign)
  */
 public class Cube extends GLShape{
 
@@ -185,7 +178,6 @@ public class Cube extends GLShape{
 		indexBuffer = ByteBuffer.allocateDirect(indices.length);
 		indexBuffer.put(indices);
 		indexBuffer.position(0);
-		
 	}
 	
 
@@ -205,19 +197,21 @@ public class Cube extends GLShape{
 	 */
 	public void draw(GL10 gl, int filter) {
 		//Bind the texture according to the set texture filter
-		gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[filter]);
+//		gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[filter]);
 
 		//Enable the vertex, texture and normal state
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+//		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
 
 		//Set the face rotation
 		gl.glFrontFace(GL10.GL_CCW);
 		
+//		gl.glTexEnvf(GL10.GL_FRONT, GL10.GL_AMBIENT_AND_DIFFUSE, GL10.GL_ADD);
+		
 		//Point to our buffers
 		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer);
-		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, textureBuffer);
+//		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, textureBuffer);
 		gl.glNormalPointer(GL10.GL_FLOAT, 0, normalBuffer);
 		
 		//Draw the vertices as triangles, based on the Index Buffer information
@@ -225,7 +219,7 @@ public class Cube extends GLShape{
 		
 		//Disable the client state before leaving
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
-		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+//		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		gl.glDisableClientState(GL10.GL_NORMAL_ARRAY);
 	}
 
@@ -236,60 +230,64 @@ public class Cube extends GLShape{
 	 * @param context - The Activity context
 	 */
 	@Override
-	public void loadGLTexture(GL10 gl, Context context) {
-		//Get the texture from the Android resource directory
-		InputStream is = context.getResources().openRawResource(R.drawable.ic_menu_week);
-		Bitmap bitmap = null;
-		try {
-			//BitmapFactory is an Android graphics utility for images
-			bitmap = BitmapFactory.decodeStream(is);
-
-		} finally {
-			//Always clear and close
-			try {
-				is.close();
-				is = null;
-			} catch (IOException e) {
-			}
-		}
-
-		//Generate there texture pointer
-		gl.glGenTextures(3, textures, 0);
-
-		//Create Nearest Filtered Texture and bind it to texture 0
-		gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);
-		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_NEAREST);
-		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
-		GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
-
-		//Create Linear Filtered Texture and bind it to texture 1
-		gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[1]);
-		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
-		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_LINEAR);
-		GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
-
-		//Create mipmapped textures and bind it to texture 2
-		gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[2]);
-		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
-		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_LINEAR_MIPMAP_NEAREST);
-		/*
-		 * This is a change to the original tutorial, as buildMipMap does not exist anymore
-		 * in the Android SDK.
-		 * 
-		 * We check if the GL context is version 1.1 and generate MipMaps by flag.
-		 * Otherwise we call our own buildMipMap implementation
-		 */
-		if(gl instanceof GL11) {
-			gl.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_GENERATE_MIPMAP, GL11.GL_TRUE);
-			GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
-			
-		//
-		} else {
-			buildMipmap(gl, bitmap);
-		}		
-		
-		//Clean up
-		bitmap.recycle();
+	public void loadGLTexture() {
+//		//Get the texture from the Android resource directory
+//		InputStream is = Settings.context.getResources().openRawResource(R.drawable.crate);
+//		Bitmap bitmap = null;
+//		try {
+//			//BitmapFactory is an Android graphics utility for images
+//			bitmap = BitmapFactory.decodeStream(is);
+//
+//		} finally {
+//			//Always clear and close
+//			try {
+//				is.close();
+//				is = null;
+//			} catch (IOException e) {
+//				Log.d("Cube not loading image", this.toString());
+//			}
+//		}
+//
+//		final GL10 gl = GLH.gl;
+//		//Generate the texture pointer
+//		gl.glGenTextures(3, textures, 0);
+//
+//		//Create Nearest Filtered Texture and bind it to texture 0
+//		gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);
+//		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_NEAREST);
+//		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
+//		GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
+//
+//		//Create Linear Filtered Texture and bind it to texture 1
+//		gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[1]);
+//		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
+//		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_LINEAR);
+//		GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
+//
+//		//Create mipmapped textures and bind it to texture 2
+//		gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[2]);
+//		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
+//		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_LINEAR_MIPMAP_NEAREST);
+//		/*
+//		 * This is a change to the original tutorial, as buildMipMap does not exist anymore
+//		 * in the Android SDK.
+//		 * 
+//		 * We check if the GL context is version 1.1 and generate MipMaps by flag.
+//		 * Otherwise we call our own buildMipMap implementation
+//		 */
+//		if(gl instanceof GL11) {
+//			gl.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_GENERATE_MIPMAP, GL11.GL_TRUE);
+//			GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
+//			
+//		//
+//		} else {
+//			buildMipmap(gl, bitmap);
+//		}		
+//		
+//		//Clean up
+//		bitmap.recycle();
+//	
+	
 	}
 	
 	/**
@@ -332,6 +330,11 @@ public class Cube extends GLShape{
 			bitmap = bitmap2;
 		}
 	}
+	
+	public FloatBuffer getTextureBuffer() {
+		return textureBuffer;
+	}
+
 
 	@Override
 	public BoundingBox getBounds() {

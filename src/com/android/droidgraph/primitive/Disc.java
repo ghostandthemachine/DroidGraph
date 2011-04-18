@@ -1,13 +1,11 @@
 package com.android.droidgraph.primitive;
 
-import javax.microedition.khronos.opengles.GL10;
+import java.nio.FloatBuffer;
 
-import android.content.Context;
+import javax.microedition.khronos.opengles.GL10;
 
 import com.android.droidgraph.geom.BoundingBox;
 import com.android.droidgraph.shape.GLShape;
-import com.android.droidgraph.util.PrintLogUtil;
-import com.android.droidgraph.vecmath.Point3d;
 
 public class Disc extends GLShape {
 
@@ -23,13 +21,6 @@ public class Disc extends GLShape {
 	
 	Polygon[] polygons;
 
-	Point3d lower = new Point3d();
-	Point3d upper = new Point3d();
-
-	//
-	PrintLogUtil log = new PrintLogUtil();
-
-	//
 
 	public Disc(int segs, float ir, float or) {
 
@@ -72,21 +63,6 @@ public class Disc extends GLShape {
 			verts[i + 4] = ty * outerRadius; //
 			verts[i + 5] = defaultZ; //
 
-			if (verts[i + 3] < lower.x) {
-				lower.x = verts[i + 3];
-			} else {
-				upper.x = verts[i + 3];
-			}
-			if (verts[i + 4] < lower.y) {
-				lower.y = verts[i + 4];
-			} else {
-				upper.y = verts[i + 4];
-			}
-			if (verts[i + 5] < lower.z) {
-				lower.z = verts[i + 5];
-			} else {
-				upper.z = verts[i + 5];
-			}
 
 		}
 	}
@@ -124,23 +100,25 @@ public class Disc extends GLShape {
 	}
 
 	public void draw(GL10 gl) {
+		
 		for (int i = 0; i <= polygons.length - 1; i++) {
+			
 			polygons[i].draw(gl);
 		}
 	}
 
-	
-	public BoundingBox getBounds() {
-		BoundingBox bounds = new BoundingBox();
-		bounds.setLower(lower);
-		bounds.setUpper(upper);
-		return bounds;
+
+
+	@Override
+	public void loadGLTexture() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
-	public void loadGLTexture(GL10 gl, Context context) {
+	public FloatBuffer getTextureBuffer() {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 

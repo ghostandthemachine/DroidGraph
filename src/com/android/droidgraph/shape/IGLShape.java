@@ -1,18 +1,19 @@
 package com.android.droidgraph.shape;
 
+import java.nio.FloatBuffer;
+
 import javax.microedition.khronos.opengles.GL10;
 
-import android.content.Context;
-
-import com.android.droidgraph.geom.BoundingBox;
-import com.android.droidgraph.vecmath.Point3d;
+import com.android.droidgraph.util.SGColor;
 
 public interface IGLShape {
-	public BoundingBox getBounds();
-	
 	public void draw(GL10 gl);
-
-	public boolean contains(Point3d point);
 	
-	public void loadGLTexture(GL10 gl, Context context);
+	public void loadGLTexture();
+	
+	public FloatBuffer getTextureBuffer();
+	
+	public void setColor(SGColor color);
+	public SGColor getColor();
+
 }

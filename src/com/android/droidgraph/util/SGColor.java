@@ -1,27 +1,23 @@
 package com.android.droidgraph.util;
 
-
 public class SGColor {
 
-	public float red; 
-	public float green;
-	public float blue;
-	public float alpha;
+	public float[] color = {1,1,1,1};
 
 	public SGColor() {
 
 	}
 
 	public SGColor(float red, float green, float blue, float alpha) {
-		this.red = red;
-		this.green = green;
-		this.blue = blue;
-		this.alpha = alpha;
+		color[0] = red;
+		color[1] = green;
+		color[2] = blue;
+		color[3] = alpha;
 	}
 
 	public SGColor(float gray, float alpha) {
-		this.red = this.green = this.blue = gray;
-		this.alpha = alpha;
+		color[0] = color[1] = color[2] = gray;
+		color[3] = alpha;
 	}
 	
 }

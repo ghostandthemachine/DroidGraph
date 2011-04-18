@@ -1,78 +1,88 @@
 package com.android.droidgraph.scene;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 
-import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
+
+import android.util.Log;
+
+import com.android.droidgraph.util.Settings;
 
 public class LightStudio {
 	
-	HashMap<String, Light> lights = new HashMap<String, Light>();
-	ArrayList<String> names = new ArrayList<String>();
+	Collection<Light> lights = new HashSet<Light>();
+	HashMap<String, Light> names = new HashMap<String, Light>();
 	
 	private int numLights = 0;
 	
-	private boolean light = true;
+	private boolean lightEnabled = true;
 	
 	private GL10 gl;
 	
-	public LightStudio(GL10 _gl) {
-		gl = _gl;
+	public LightStudio() {
+		gl = Settings.gl;
+		Settings.setLightStudio(this);
 	}
 	
-	
-	
-	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-		for (String name : names) {
-			Light light = lights.get(name);
-			light.onSurfaceCreated(gl, config);
-			
-		}
-		
+	public void onSurfaceCreated(GL10 gl) {
+		for (Light light : lights) {
+			light.onSurfaceCreated(gl);
+			Log.d("LightStudio", light.toString());
+			}
 	}
 	
-	
-	public void createLight(String name, float[] ambient, float[] diffuse, float[] position){
-		Light light = new Light(this, ambient, diffuse, position, lights.size() - 1);
-		lights.put(name, light);
-		names.add(name);
-		numLights+=1;
+	public void createLight(String name, float[] ambient, float[] diffuse, float[] specular, float[] position){
+		Light light = new Light(ambient, diffuse, specular, position, lights.size() - 1);
+		lights.add(light);
+		names.put(name, light);
+		numLights++;
 	}
 	
-	public void onDrawFrame(GL10 gl) {
+	public void createLight(String name, float[] pos) {
+		Light light = new Light(pos, lights.size() - 1);
+		lights.add(light);
+		names.put(name, light);
+		numLights++;
+	}
+	
+	public void draw(GL10 gl) {
 		// Check if the light flag has been set to enable/disable lighting
-		if (light) {
+		if (lightEnabled) {
 			gl.glEnable(GL10.GL_LIGHTING);
-		} else {
+		} 
+	}
+	
+	public void killDraw(GL10 gl) {
+		// anything that needs to happen at the end
+		if(lightEnabled) {
 			gl.glDisable(GL10.GL_LIGHTING);
 		}
 	}
 	
-	public GL10 getGL() {
-		return gl;
-	}
-	
-	
 	public Light enableLight(String name) {
-		Light light = lights.get(name);
+		Light light = names.get(name);
 		gl.glEnable(light.getID());
 		return light;
 	}
 	
 	public Light disableLight(String name) {
-		Light light = lights.get(name);
+		Light light = names.get(name);
 		gl.glDisable(light.getID());
 		return light;
 	}
 	
 	public void enable() {
-		light = true;
+		lightEnabled = true;
 	}
 	
 	public void disable() {
-		light = false;
+		lightEnabled = false;
 	}
 	
+	public Light getLight(String name) {
+		return names.get(name);
+	}
 
 }

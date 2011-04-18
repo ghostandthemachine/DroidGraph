@@ -6,11 +6,7 @@ import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import android.content.Context;
-
-import com.android.droidgraph.geom.BoundingBox;
 import com.android.droidgraph.shape.GLShape;
-import com.android.droidgraph.vecmath.Point3d;
 
 /**
  * This class is an object representation of a Triangle containing the vertex
@@ -25,9 +21,6 @@ public class Triangle extends GLShape {
 	private FloatBuffer vertexBuffer;
 	/** The buffer holding the colors */
 	private FloatBuffer colorBuffer;
-
-	Point3d lower = new Point3d();
-	Point3d upper = new Point3d();
 
 	/** The initial vertex definition */
 	private float vertices[] = { 0.0f, 1.0f, 0.0f, // Top
@@ -94,38 +87,14 @@ public class Triangle extends GLShape {
 	}
 
 	@Override
-	public BoundingBox getBounds() {
-		calculateBoundsVerts();
-		BoundingBox bounds = new BoundingBox();
-		bounds.setLower(lower);
-		bounds.setUpper(upper);
-		return bounds;
-	}
-
-	private void calculateBoundsVerts() {
-		float[] verts = vertices;
-		for (int i = 0; i < verts.length; i++) {
-			if (verts[i + 3] < lower.x) {
-				lower.x = verts[i + 3];
-			} else {
-				upper.x = verts[i + 3];
-			}
-			if (verts[i + 4] < lower.y) {
-				lower.y = verts[i + 4];
-			} else {
-				upper.y = verts[i + 4];
-			}
-			if (verts[i + 5] < lower.z) {
-				lower.z = verts[i + 5];
-			} else {
-				upper.z = verts[i + 6];
-			}
-		}
+	public void loadGLTexture() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
-	public void loadGLTexture(GL10 gl, Context context) {
+	public FloatBuffer getTextureBuffer() {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 }
