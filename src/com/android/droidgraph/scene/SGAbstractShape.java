@@ -67,7 +67,6 @@ public abstract class SGAbstractShape extends SGLeaf {
 		if(materials != null) {
 			for(Material material : materials) {
 				material.loadMaterial(gl);
-				log.pl("SGAbstractShape", "loadTexture(gl)");
 			}
 		}
 	}

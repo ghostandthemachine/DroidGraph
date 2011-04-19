@@ -109,9 +109,10 @@ public class SGGroup extends SGParent {
 	public void load(GL10 gl) {
 		if(children != null) {
 			for(SGNode child : children) {
-				if(child instanceof SGShape) {
-					((SGShape) child).load(gl);
-					log.pl("SGGroup", "load(gl)");
+				if(child instanceof SGAbstractShape) {
+					((SGAbstractShape) child).load(gl);
+				} else if (child instanceof SGGroup) {
+					((SGGroup) child).load(gl);
 				}
 			}
 		}

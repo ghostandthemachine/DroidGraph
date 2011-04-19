@@ -464,7 +464,7 @@ public abstract class SGNode {
 			return;
 		}
 
-		GLH.pushMatrix();
+		gl.glPushMatrix();
 		
 		/*
 		 * run scale events
@@ -517,7 +517,7 @@ public abstract class SGNode {
 		/*
 		 * pop out of this nodes matrix
 		 */
-		GLH.popMatrix();
+		gl.glPopMatrix();
 
 	}
 

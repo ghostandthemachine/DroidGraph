@@ -18,11 +18,8 @@ import com.android.droidgraph.vecmath.Point3d;
  */
 public class SGShape extends SGAbstractShape {
 
-	// private PrintLogUtil log = new PrintLogUtil();
-
-	private GLShape shape;
-	private Shape cachedStrokeShape;
-
+	private GLShape glshape;
+	private Shape cachedStrokeShape;	
 	protected BoundingBox bounds = new BoundingBox();
 
 	// // Store animation action runners
@@ -44,7 +41,7 @@ public class SGShape extends SGAbstractShape {
 	 * @return the {@code Shape} of this node
 	 */
 	public final GLShape getShape() {
-		return shape;
+		return glshape;
 	}
 
 	/**
@@ -55,55 +52,49 @@ public class SGShape extends SGAbstractShape {
 	 * object is modified, it is the user's responsibility to call
 	 * {@code setShape()} to ensure that the node state is properly updated.
 	 * 
-	 * @param shape
+	 * @param glshape
 	 *            the {@code Shape} of this node
 	 */
-	public void setShape(GLShape shape) {
-		this.shape = shape;
-		this.cachedStrokeShape = null;
-		accumulate(shape);
-		
-		if (this.hasTexture()) {
-			shape.loadGLTexture();
-		}
+	public void setShape(GLShape glshape) {
+		this.glshape = glshape;
 	}
-
+	
 	@Override
 	public void paint(GL10 gl) {
-		if (shape == null) {
+		if (glshape == null) {
 			return;
 		}
 		
 		/*
 		 * Materials
 		 */
+		
+		final ArrayList<Material> ms = materials;
 		if (materials != null) {
-			final ArrayList<Material> ms = materials;
 			for (Material material : ms) {
 				material.draw(gl);
-
 			}
 		}
 		
-		shape.draw(gl);
+		glshape.draw(gl);
+		
 		
 		/*
-		 * Finish up material calls
+		 * kill the materials
 		 */
 		if (materials != null) {
-			final ArrayList<Material> ms = materials;
 			for (Material material : ms) {
 				material.killDraw(gl);
 			}
 		}
-
+		
 		// update lifetime
 		lifetime++;
 	}
 
 	@Override
 	public BoundingBox getBounds(Transform3D transform) {
-		if (shape == null) {
+		if (glshape == null) {
 			return new BoundingBox();
 		}
 		return bounds;
@@ -119,7 +110,7 @@ public class SGShape extends SGAbstractShape {
 
 	@Override
 	public boolean contains(Point3d point) {
-		return (shape == null) ? false : shape.contains(point);
+		return (glshape == null) ? false : glshape.contains(point);
 	}
 
 }

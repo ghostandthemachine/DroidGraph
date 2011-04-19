@@ -6,6 +6,7 @@ import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
 
 import com.android.droidgraph.geom.Transform3D;
+import com.android.droidgraph.material.Material;
 import com.android.droidgraph.vecmath.Matrix3f;
 import com.android.droidgraph.vecmath.Point3f;
 import com.android.droidgraph.vecmath.Vector3f;
@@ -83,6 +84,16 @@ public class GLH {
 	public static void initTranslucentGLSurfaceView(GLSurfaceView view) {
 		view.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
 		view.getHolder().setFormat(PixelFormat.TRANSLUCENT);
+	}
+	
+	
+	public static Material defaultMaterial;
+	
+	public static Material getDefaultMaterial() {
+		return defaultMaterial;
+	}
+	public static void setDefaultMaterial(Material material) {
+		defaultMaterial = material;
 	}
 
 }

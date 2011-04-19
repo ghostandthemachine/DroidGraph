@@ -7,25 +7,33 @@ import java.nio.FloatBuffer;
 import javax.microedition.khronos.opengles.GL10;
 
 import com.android.droidgraph.shape.GLShape;
+import com.android.droidgraph.util.GLH;
 
 public class AMaterial implements IMaterial {
-	
-//	Material Properties
-	private float[] diffuse = {0.8f, 0.8f, 0.8f, 1.0f};
-	private float[] ambient = {0.8f, 0.8f, 0.8f, 1.0f};
-	private float[] specular = {0.2f, 0.2f, 0.2f, 0.5f};
+
+	// Material Properties
+	private float[] diffuse = { 0.8f, 0.8f, 0.8f, 1.0f };
+	private float[] ambient = { 0.8f, 0.8f, 0.8f, 1.0f };
+	private float[] specular = { 0.2f, 0.2f, 0.2f, 0.5f };
 	private float shininess = 12f;
-	private float[] position = {0.0f, 0.0f, 0.0f};
-	
-//	Material Buffers
+	private float[] position = { 0.0f, 0.0f, 0.0f };
+
+	// Material Buffers
 	private FloatBuffer ambientBuffer;
 	private FloatBuffer diffuseBuffer;
 	private FloatBuffer specularBuffer;
 	private FloatBuffer positionBuffer;
 
 	protected GLShape parent;
+	protected Material defaultMaterial = GLH.getDefaultMaterial();
 	
+	protected boolean enabled = true;
+
 	public AMaterial(GLShape glshape) {
+		parent = glshape;
+	}
+
+	public void setShape(GLShape glshape) {
 		parent = glshape;
 	}
 
@@ -39,8 +47,10 @@ public class AMaterial implements IMaterial {
 		ambient[2] = blue;
 		ambient[3] = alpha;
 		updateAmbientBuffer();
+		
+		defaultMaterial = GLH.defaultMaterial;
 	}
-	
+
 	public void setAmbient(float[] ambient) {
 		this.ambient = ambient;
 	}
@@ -49,7 +59,7 @@ public class AMaterial implements IMaterial {
 	public float[] getAmbient() {
 		return ambient;
 	}
-	
+
 	public void initAmbientBuffer() {
 		ByteBuffer byteBuff = ByteBuffer.allocateDirect(ambient.length * 4);
 		byteBuff.order(ByteOrder.nativeOrder());
@@ -57,14 +67,17 @@ public class AMaterial implements IMaterial {
 		ambientBuffer.put(ambient);
 		ambientBuffer.position(0);
 	}
-	
+
 	public void updateAmbientBuffer() {
 		ambientBuffer.position(0);
 		ambientBuffer.put(ambient);
 		ambientBuffer.position(0);
 	}
 	
-	
+	public FloatBuffer getAmbientBuffer() {
+		return ambientBuffer;
+	}
+
 	/*
 	 * Diffusse
 	 */
@@ -76,7 +89,7 @@ public class AMaterial implements IMaterial {
 		diffuse[3] = alpha;
 		updateDiffuseBuffer();
 	}
-	
+
 	public void setDiffuse(float[] diffuse) {
 		this.diffuse = diffuse;
 		updateDiffuseBuffer();
@@ -87,6 +100,10 @@ public class AMaterial implements IMaterial {
 		return diffuse;
 	}
 	
+	public FloatBuffer getDiffuseBuffer() {
+		return diffuseBuffer;
+	}
+
 	public void initDiffuseBuffer() {
 		ByteBuffer byteBuff = ByteBuffer.allocateDirect(diffuse.length * 4);
 		byteBuff.order(ByteOrder.nativeOrder());
@@ -94,21 +111,22 @@ public class AMaterial implements IMaterial {
 		diffuseBuffer.put(diffuse);
 		diffuseBuffer.position(0);
 	}
-	
+
 	public void updateDiffuseBuffer() {
 		diffuseBuffer.position(0);
 		diffuseBuffer.put(diffuse);
 		diffuseBuffer.position(0);
 	}
-	
+
 	/*
 	 * Ambient and Diffuse
 	 */
-	public void setAmbientAndDiffuse(float red, float green, float blue, float alpha) {
-		setAmbient(red,green,blue,alpha);
-		setDiffuse(red,green,blue,alpha);
+	public void setAmbientAndDiffuse(float red, float green, float blue,
+			float alpha) {
+		setAmbient(red, green, blue, alpha);
+		setDiffuse(red, green, blue, alpha);
 	}
-	
+
 	/*
 	 * Specular
 	 */
@@ -120,7 +138,7 @@ public class AMaterial implements IMaterial {
 		specular[3] = alpha;
 		updateSpecularBuffer();
 	}
-	
+
 	public void setSpecular(float[] specular) {
 		this.specular = specular;
 		updateSpecularBuffer();
@@ -131,6 +149,10 @@ public class AMaterial implements IMaterial {
 		return specular;
 	}
 	
+	public FloatBuffer getSpecularBuffer() {
+		return specularBuffer;
+	}
+
 	public void initSpecularBuffer() {
 		ByteBuffer byteBuff = ByteBuffer.allocateDirect(specular.length * 4);
 		byteBuff.order(ByteOrder.nativeOrder());
@@ -138,7 +160,7 @@ public class AMaterial implements IMaterial {
 		specularBuffer.put(specular);
 		specularBuffer.position(0);
 	}
-	
+
 	public void updateSpecularBuffer() {
 		specularBuffer.position(0);
 		specularBuffer.put(specular);
@@ -168,7 +190,7 @@ public class AMaterial implements IMaterial {
 		position[2] = z;
 		updatePositionBuffer();
 	}
-	
+
 	public void setPosition(float[] position) {
 		this.position = position;
 		updatePositionBuffer();
@@ -186,45 +208,72 @@ public class AMaterial implements IMaterial {
 		positionBuffer.put(position);
 		positionBuffer.position(0);
 	}
-	
+
 	public void updatePositionBuffer() {
 		positionBuffer.position(0);
 		positionBuffer.put(position);
 		positionBuffer.position(0);
-	}	
-	
+	}
+
 	protected void initBuffers() {
 		initAmbientBuffer();
 		initDiffuseBuffer();
 		initSpecularBuffer();
 		initPositionBuffer();
 	}
-	
+
 	protected void updateBuffers() {
 		updateAmbientBuffer();
 		updateDiffuseBuffer();
 		updateSpecularBuffer();
 		updatePositionBuffer();
 	}
-	
-    
+
 	@Override
-	public void loadMaterial(GL10 gl) {	
+	public void loadMaterial(GL10 gl) {
 	}
 
 	@Override
-    public void draw(GL10 gl){
-		gl.glColor4f(parent.getColor().color[0], parent.getColor().color[1], parent.getColor().color[2], parent.getColor().color[3]);
-		gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_AMBIENT, ambientBuffer);
-        gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_DIFFUSE, diffuseBuffer);
-        gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_SPECULAR, specularBuffer);
-        gl.glMaterialf(gl.GL_FRONT_AND_BACK, gl.GL_SHININESS, Math.min(shininess, 128));	
-    }
+	public void draw(GL10 gl) {
+		if (parent != null) {
+			if(enabled) {
+			gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT,
+					ambientBuffer);
+			gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_DIFFUSE,
+					diffuseBuffer);
+			gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_SPECULAR,
+					specularBuffer);
+			gl.glMaterialf(GL10.GL_FRONT_AND_BACK, GL10.GL_SHININESS,
+					Math.min(shininess, 128));
+			}
+		}
+	}
 	
 	@Override
 	public void killDraw(GL10 gl) {
-		gl.glClearColor(0, 0, 0, 1);
-		gl.glLoadIdentity();
+		if (parent != null) {
+			if(enabled) {
+			gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT,
+					defaultMaterial.getAmbientBuffer());
+			gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_DIFFUSE,
+					defaultMaterial.getDiffuseBuffer());
+			gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_SPECULAR,
+					defaultMaterial.getSpecularBuffer());
+			gl.glMaterialf(GL10.GL_FRONT_AND_BACK, GL10.GL_SHININESS,
+					Math.min(defaultMaterial.getShininess(), 128));
+			}
+		}
+	}
+
+
+	@Override
+	public void enable() {
+		enabled = true;
+	}
+
+	@Override
+	public void disable() {
+		enabled = false;
 	}
 
 }

@@ -20,7 +20,7 @@ class SGViewRenderer implements GLSurfaceView.Renderer {
 	// for debug
 	PrintLogUtil log = new PrintLogUtil();
 
-	private float[] background = { 1f, 1f, 1f, 1f };
+	private float[] background = { 0f, 0f, 0f, 1f };
 	private boolean light = false;
 	private int renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY;
 	private SGView view;

@@ -2,10 +2,11 @@ package com.android.droidgraph.scene;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
+import com.android.droidgraph.material.Material;
+import com.android.droidgraph.util.GLH;
 import com.android.droidgraph.util.PrintLogUtil;
 import com.android.droidgraph.util.Settings;
 
@@ -26,6 +27,7 @@ public class SGView extends GLSurfaceView {
 		mRenderer.setContext(context);
 		setRenderer(mRenderer);
 		Settings.setContext(context);
+		GLH.setDefaultMaterial(new Material(null));
 	}
 
 	@Override

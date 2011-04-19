@@ -179,13 +179,6 @@ public class Cube extends GLShape{
 		indexBuffer.put(indices);
 		indexBuffer.position(0);
 	}
-	
-
-	@Override
-	public void draw(GL10 gl) {
-		draw(gl, 0);
-	}
-	
 
 	/**
 	 * The object own drawing function.
@@ -195,31 +188,25 @@ public class Cube extends GLShape{
 	 * @param gl - The GL Context
 	 * @param filter - Which texture filter to be used
 	 */
-	public void draw(GL10 gl, int filter) {
-		//Bind the texture according to the set texture filter
-//		gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[filter]);
-
+	@Override
+	public void draw(GL10 gl) {
 		//Enable the vertex, texture and normal state
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-//		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
 
 		//Set the face rotation
 		gl.glFrontFace(GL10.GL_CCW);
 		
-//		gl.glTexEnvf(GL10.GL_FRONT, GL10.GL_AMBIENT_AND_DIFFUSE, GL10.GL_ADD);
-		
 		//Point to our buffers
 		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer);
-//		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, textureBuffer);
 		gl.glNormalPointer(GL10.GL_FLOAT, 0, normalBuffer);
 		
+		gl.glColor4f(this.getColor().color[0], this.getColor().color[1], this.getColor().color[2], this.getColor().color[3]);
 		//Draw the vertices as triangles, based on the Index Buffer information
 		gl.glDrawElements(GL10.GL_TRIANGLES, indices.length, GL10.GL_UNSIGNED_BYTE, indexBuffer);
 		
 		//Disable the client state before leaving
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
-//		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		gl.glDisableClientState(GL10.GL_NORMAL_ARRAY);
 	}
 
@@ -306,25 +293,20 @@ public class Cube extends GLShape{
 		//
 		int height = bitmap.getHeight();
 		int width = bitmap.getWidth();
-
 		//
 		while(height >= 1 || width >= 1) {
 			//First of all, generate the texture from our bitmap and set it to the according level
 			GLUtils.texImage2D(GL10.GL_TEXTURE_2D, level, bitmap, 0);
-			
 			//
 			if(height == 1 || width == 1) {
 				break;
 			}
-
 			//Increase the mipmap level
 			level++;
-
 			//
 			height /= 2;
 			width /= 2;
 			Bitmap bitmap2 = Bitmap.createScaledBitmap(bitmap, width, height, true);
-			
 			//Clean up
 			bitmap.recycle();
 			bitmap = bitmap2;

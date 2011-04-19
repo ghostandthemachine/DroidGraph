@@ -25,5 +25,4 @@ public class Material extends AMaterial{
 		super(shape);
 		initBuffers();			// init with default params
 	}
-
 }

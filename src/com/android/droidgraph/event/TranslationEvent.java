@@ -17,7 +17,6 @@ public class TranslationEvent extends GraphNodeEvent {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		l.pl("TranslationEvent - constructor()", x, y, z);
 	}
 
 	@Override

@@ -22,7 +22,10 @@ public interface IMaterial {
 	public float[] getPosition();
 	
 	public void loadMaterial(GL10 gl);
+	
 	public void draw(GL10 gl);
 	public void killDraw(GL10 gl);
-	
+
+	public void enable();
+	public void disable();
 }
