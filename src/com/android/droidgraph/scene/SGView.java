@@ -11,7 +11,7 @@ import com.android.droidgraph.util.PrintLogUtil;
 import com.android.droidgraph.util.Settings;
 
 public class SGView extends GLSurfaceView {
-	
+
 	PrintLogUtil log = new PrintLogUtil();
 
 	// the renderer that handles all drawing
@@ -35,7 +35,6 @@ public class SGView extends GLSurfaceView {
 		super.setRenderMode(mode);
 		mRenderer.setRenderMode(mode);
 	}
-
 
 	SGGroup getSceneGroup() {
 		return sceneGroup;
@@ -89,21 +88,12 @@ public class SGView extends GLSurfaceView {
 		return super.onKeyDown(keyCode, event);
 	}
 
-
 	@Override
-    public boolean onTouchEvent(final MotionEvent event) {
-		dumpEvent(event);
-		handleEvent(event);
-		
-		mRenderer.setLookAtX( - (event.getX() / getWidth()) * 4);
-		mRenderer.setLookAtY( - (event.getY() / getHeight()) * 4);
-		
-            return true;
-        }
-
-	private void handleEvent(MotionEvent event) {
-//		sceneGroup.handleMotionEvent(event);
+	public boolean onTouchEvent(final MotionEvent event) {
+		return true;
 	}
+
+
 
 	/** Show an event in the LogCat view, for debugging */
 	private void dumpEvent(MotionEvent event) {
@@ -129,9 +119,9 @@ public class SGView extends GLSurfaceView {
 				sb.append(";");
 		}
 		sb.append("]");
-//		Log.d("TouchEvent info", sb.toString());
-		
-		if(actionCode == MotionEvent.ACTION_POINTER_DOWN) {
+		// Log.d("TouchEvent info", sb.toString());
+
+		if (actionCode == MotionEvent.ACTION_POINTER_DOWN) {
 			Settings.lightStudio.disable();
 		} else if (actionCode == MotionEvent.ACTION_POINTER_UP) {
 			Settings.lightStudio.enable();

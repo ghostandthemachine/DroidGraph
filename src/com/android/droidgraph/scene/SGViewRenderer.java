@@ -66,7 +66,6 @@ class SGViewRenderer implements GLSurfaceView.Renderer {
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 		gl.glLoadIdentity(); // Reset The Current Modelview Matrix
 		gl.glClearColor(background[0],background[1],background[2],background[3]);
-
 		GLU.gluLookAt(gl, lx, ly, 5, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
 
 		lightStudio.draw(gl);

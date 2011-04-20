@@ -1,10 +1,10 @@
 package com.android.droidgraph.fx;
 
-import com.android.droidgraph.scene.SGShape;
+import com.android.droidgraph.scene.SGGroup;
 import com.android.droidgraph.scene.SGTransform;
 import com.android.droidgraph.vecmath.Vector3f;
 
-public class FXShape extends SGShape {
+public class FXGroup extends SGGroup{
 
 	private SGTransform.Translate translate;
 	private float translateX = 0;
@@ -21,12 +21,12 @@ public class FXShape extends SGShape {
 	private float scaleY = 1;
 	private float scaleZ = 1;
 	
-	public FXShape() {
+	public FXGroup() {
 		translate = SGTransform.createTranslation(0, 0, 0, this);
 		rotate = SGTransform.createRotation(0, 0, 0, this);
 		scale = SGTransform.createScale(1, 1, 1, this);
 	}
-
+	
 	
 	/*
 	 * getters and setters
@@ -163,6 +163,4 @@ public class FXShape extends SGShape {
 	public void scaleBy(float sx, float sy, float sz) {
 		setScale(scaleX += sx, scaleY += sy, scaleZ += sz);
 	}
-	  
-
 }

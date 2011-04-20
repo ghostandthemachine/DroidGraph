@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 
 import com.android.droidgraph.scene.SGView;
+import com.android.droidgraph.test.TestNode;
 import com.android.droidgraph.util.PrintLogUtil;
 
 public class Run extends Activity {
