@@ -25,7 +25,7 @@ public class RotatingCube extends FXGroup{
 	
 	private void initFXShape(FXShape node) {
 		node.setShape(new Cube());
-		Material material = new Material(node.getShape());
+		Material material = new Material(node);
 		material.setAmbientAndDiffuse(1, 0.5f, 0, 1);
 		node.addMaterial(material);
 		this.add(node);

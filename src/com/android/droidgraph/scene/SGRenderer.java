@@ -1,6 +1,7 @@
 package com.android.droidgraph.scene;
 
 import java.util.HashSet;
+import java.util.Map.Entry;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -8,38 +9,55 @@ import javax.microedition.khronos.opengles.GL10;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
+import android.view.MotionEvent;
 
+import com.android.droidgraph.lighting.LightStudio;
 import com.android.droidgraph.util.GLH;
 import com.android.droidgraph.util.PrintLogUtil;
+import com.android.droidgraph.util.SGColorI;
 import com.android.droidgraph.util.SGLog;
 import com.android.droidgraph.util.Settings;
-import com.android.droidgraph.util.TextureLoader;
 
-class SGViewRenderer implements GLSurfaceView.Renderer {
+class SGRenderer implements GLSurfaceView.Renderer {
 
 	// for debug
 	PrintLogUtil log = new PrintLogUtil();
 
-	private float[] background = { 0f, 0f, 0f, 1f };
-	private boolean light = false;
+	private float[] background = { 1f, 1f, 1f, 1f };
 	private int renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY;
-	private SGView view;
 	private SGGroup sceneGroup;
 	private float lx = 0f;
 	private float ly = 0f;
 
-	private LightStudio lightStudio = new LightStudio();
+	private LightStudio mLightStudio;
+	
+	private Settings mSettings;
 
-	private HashSet<TextureLoader> textureLoaders = new HashSet<TextureLoader>();
+	public SGRenderer(SGView view, Settings settings) {
+		mSettings = settings;
+		mSettings.setRenderer(this);
+		
+		mLightStudio = new LightStudio(mSettings);
 
-	public SGViewRenderer(SGView view) {
-		this.view = view;
-		Settings.setRenderer(this);
 	}
-
-	public void setSceneGroup(SGNode group) {
-		// SGGroup sggroup = (SGGroup) group;
-		sceneGroup = (SGGroup) group;
+	
+	@Override
+	public void onSurfaceCreated(GL10 gl, EGLConfig eglc) {
+		GLH.setGL(gl);
+		mSettings.setGL(gl);
+		//Settings
+		gl.glDisable(GL10.GL_DITHER);				//Disable dithering ( NEW )
+		gl.glEnable(GL10.GL_TEXTURE_2D);			//Enable Texture Mapping
+		gl.glShadeModel(GL10.GL_SMOOTH); 			//Enable Smooth Shading
+		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f); 	//Black Background
+		gl.glClearDepthf(1.0f); 					//Depth Buffer Setup
+		gl.glEnable(GL10.GL_DEPTH_TEST); 			//Enables Depth Testing
+		gl.glDepthFunc(GL10.GL_LEQUAL); 			//The Type Of Depth Testing To Do
+		//Perspective Calculations
+		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST); 
+		
+		mLightStudio.load(gl);
+		sceneGroup.load(gl);
 	}
 
 	@Override
@@ -68,41 +86,27 @@ class SGViewRenderer implements GLSurfaceView.Renderer {
 		gl.glClearColor(background[0],background[1],background[2],background[3]);
 		GLU.gluLookAt(gl, lx, ly, 5, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
 
-		lightStudio.draw(gl);
+//		mLightStudio.draw(gl);
 		
 		// Draw the root of the scene
 		sceneGroup.render(gl);
 		
 		// call any kill methods to end the drawing cycle
-		lightStudio.killDraw(gl);
+//		mLightStudio.killDraw(gl);
 
 	}
 
+	public void setSceneGroup(SGNode group) {
+		// SGGroup sggroup = (SGGroup) group;
+		sceneGroup = (SGGroup) group;
+	}
+	
 	public void setLookAtX(float x) {
 		this.lx = x;
 	}
 
 	public void setLookAtY(float y) {
 		this.ly = y;
-	}
-
-	@Override
-	public void onSurfaceCreated(GL10 gl, EGLConfig eglc) {
-		GLH.setGL(gl);
-		Settings.setGL(gl);
-		//Settings
-		gl.glDisable(GL10.GL_DITHER);				//Disable dithering ( NEW )
-		gl.glEnable(GL10.GL_TEXTURE_2D);			//Enable Texture Mapping
-		gl.glShadeModel(GL10.GL_SMOOTH); 			//Enable Smooth Shading
-		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f); 	//Black Background
-		gl.glClearDepthf(1.0f); 					//Depth Buffer Setup
-		gl.glEnable(GL10.GL_DEPTH_TEST); 			//Enables Depth Testing
-		gl.glDepthFunc(GL10.GL_LEQUAL); 			//The Type Of Depth Testing To Do
-		//Perspective Calculations
-		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST); 
-		
-		lightStudio.onSurfaceCreated(gl);
-		sceneGroup.load(gl);
 	}
 
 	public void setRenderMode(int mode) {
@@ -114,11 +118,23 @@ class SGViewRenderer implements GLSurfaceView.Renderer {
 	}
 
 	public void setContext(Context context) {
-		Settings.setContext(context);
+		mSettings.setContext(context);
 	}
 	
 	public LightStudio getLightStudio() {
-		return lightStudio;
+		return mLightStudio;
 	}
+
+	public void processSelection(MotionEvent e, SGColorI inputColor) {
+		HashSet<SGAbstractShape> gNodeIDMap = Settings.getNodeIDMap();
+		for(SGAbstractShape node : gNodeIDMap) {
+			if(inputColor.equals(node.getColorID())){
+				node.setSelected(true);
+			}
+		}
+	}
+
+	
+	
 
 }

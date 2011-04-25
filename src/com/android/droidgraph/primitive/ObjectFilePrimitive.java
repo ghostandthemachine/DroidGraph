@@ -11,11 +11,11 @@ import com.android.droidgraph.util.Settings;
 
 public class ObjectFilePrimitive extends GLShape {
 
-	Loader mLoader;
+	private Loader mLoader;
 
-	public ObjectFilePrimitive() {
-		mLoader = new Loader(Settings.context, "test.obj");
-		mLoader.init(Settings.gl);
+	public ObjectFilePrimitive(Settings settings) {
+		mLoader = new Loader(settings.getContext(), "test.obj");
+		mLoader.init(settings.getGL());
 	}
 
 	@Override

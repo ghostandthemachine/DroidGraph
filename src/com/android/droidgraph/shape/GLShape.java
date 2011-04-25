@@ -5,26 +5,26 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 import com.android.droidgraph.geom.Bounds;
-import com.android.droidgraph.util.SGColor;
+import com.android.droidgraph.util.SGColorF;
 import com.android.droidgraph.vecmath.Point3d;
 
 
 public abstract class GLShape implements IGLShape{
 
-	SGColor color = new SGColor(1,1,1,1);
+	SGColorF color = new SGColorF(1,1,1,1);
 	FloatBuffer colorBuffer;
 	
 	public GLShape() {
 		initBuffer();
-		setColor(new SGColor(1,1,1,1));
+		setColor(new SGColorF(1,1,1,1));
 	}
 	
-	public void setColor(SGColor color) {
+	public void setColor(SGColorF color) {
 		this.color = color;
 		updateBuffer();
 	}
 	
-	public SGColor getColor() {
+	public SGColorF getColor() {
 		return color;
 	}
 	

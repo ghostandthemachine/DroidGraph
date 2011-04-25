@@ -17,6 +17,5 @@ public class RGenericTick extends RGenericGL{
 
 	@Override 
 	public void run() {
-		run(Settings.getGL());
 	}
 }

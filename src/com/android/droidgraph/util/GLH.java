@@ -59,7 +59,7 @@ public class GLH {
 		gl.glScalef(sx, sy, sz);
 	}
 
-	public static void color(SGColor c) {
+	public static void color(SGColorF c) {
 		gl.glColor4f(c.color[0], c.color[1], c.color[2], c.color[3]);
 	}
 

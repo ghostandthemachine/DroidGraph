@@ -24,8 +24,10 @@ public interface IMaterial {
 	public void loadMaterial(GL10 gl);
 	
 	public void draw(GL10 gl);
+	public void drawSelected(GL10 gl);
 	public void killDraw(GL10 gl);
 
 	public void enable();
 	public void disable();
+
 }

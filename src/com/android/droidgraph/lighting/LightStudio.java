@@ -1,4 +1,4 @@
-package com.android.droidgraph.scene;
+package com.android.droidgraph.lighting;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -21,12 +21,15 @@ public class LightStudio {
 	
 	private GL10 gl;
 	
-	public LightStudio() {
-		gl = Settings.gl;
-		Settings.setLightStudio(this);
+	private Settings mSettings;
+	
+	public LightStudio(Settings settings) {
+		mSettings = settings;
+		gl = mSettings.getGL();
+		mSettings.setLightStudio(this);
 	}
 	
-	public void onSurfaceCreated(GL10 gl) {
+	public void load(GL10 gl) {
 		for (Light light : lights) {
 			light.onSurfaceCreated(gl);
 			Log.d("LightStudio", light.toString());

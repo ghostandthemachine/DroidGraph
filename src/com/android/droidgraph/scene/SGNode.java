@@ -19,6 +19,7 @@ import com.android.droidgraph.material.Material;
 import com.android.droidgraph.material.TextureMaterial;
 import com.android.droidgraph.util.GLH;
 import com.android.droidgraph.util.PrintLogUtil;
+import com.android.droidgraph.util.SGColorI;
 import com.android.droidgraph.vecmath.Point3d;
 
 public abstract class SGNode {
@@ -429,17 +430,6 @@ public abstract class SGNode {
 	 */
 
 	/**
-	 * Render the tree of nodes to the specified {@link GL10} object descending
-	 * from this node as the root.
-	 * 
-	 * @param g
-	 *            the {@code GL10} object to render into
-	 */
-	public final void render(GL10 gl) {
-		render(gl, null);
-	}
-
-	/**
 	 * Render the tree of nodes to the specified {@link Graphics2D} object
 	 * descending from this node as the root. The {@code dirtyRegion} parameter
 	 * can be used to cull the rendering operations on the tree so that only
@@ -459,7 +449,7 @@ public abstract class SGNode {
 	 *            Note: not sure yet if I want to attempt render clipping in
 	 *            opengl es... --- ignore the dirtyRegion for now ---
 	 */
-	final void render(GL10 gl, Bounds dirtyRegion) {
+	final void render(GL10 gl) {
 		if (!isVisible()) {
 			return;
 		}
@@ -503,7 +493,7 @@ public abstract class SGNode {
 		 */
 		if (this instanceof SGParent) {
 			for (SGNode child : ((SGParent) this).getChildren()) {
-				child.render(gl, dirtyRegion);
+				child.render(gl);
 			}
 			
 		/*

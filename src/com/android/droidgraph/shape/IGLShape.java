@@ -4,7 +4,7 @@ import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import com.android.droidgraph.util.SGColor;
+import com.android.droidgraph.util.SGColorF;
 
 public interface IGLShape {
 	public void draw(GL10 gl);
@@ -13,7 +13,7 @@ public interface IGLShape {
 	
 	public FloatBuffer getTextureBuffer();
 	
-	public void setColor(SGColor color);
-	public SGColor getColor();
+	public void setColor(SGColorF color);
+	public SGColorF getColor();
 
 }

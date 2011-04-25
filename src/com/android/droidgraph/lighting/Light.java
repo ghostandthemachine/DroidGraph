@@ -1,4 +1,4 @@
-package com.android.droidgraph.scene;
+package com.android.droidgraph.lighting;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

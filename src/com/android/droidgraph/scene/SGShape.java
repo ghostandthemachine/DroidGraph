@@ -10,6 +10,7 @@ import com.android.droidgraph.geom.BoundingBox;
 import com.android.droidgraph.geom.Transform3D;
 import com.android.droidgraph.material.Material;
 import com.android.droidgraph.shape.GLShape;
+import com.android.droidgraph.util.Settings;
 import com.android.droidgraph.vecmath.Point3d;
 
 /**
@@ -19,15 +20,15 @@ import com.android.droidgraph.vecmath.Point3d;
 public class SGShape extends SGAbstractShape {
 
 	private GLShape glshape;
-	private Shape cachedStrokeShape;	
+	private Shape cachedStrokeShape;
 	protected BoundingBox bounds = new BoundingBox();
-
-	// // Store animation action runners
-	// private ArrayList<RotationTransform> rotationRunners = new
-	// ArrayList<RotationTransform>();
-	// private ArrayList<RGeneric> genericRunners = new ArrayList<RGeneric>();
+	private Settings mSettings;
 
 	private long lifetime = 0;
+
+	public SGShape() {
+		mSettings = Settings.getSceneSettingsInstance();
+	}
 
 	/**
 	 * Returns a reference to (not a copy of) the {@code Shape} of this node.
@@ -58,27 +59,41 @@ public class SGShape extends SGAbstractShape {
 	public void setShape(GLShape glshape) {
 		this.glshape = glshape;
 	}
-	
+
 	@Override
 	public void paint(GL10 gl) {
 		if (glshape == null) {
 			return;
 		}
-		
+
 		/*
+		 * if picking, simple render and return
+		 */
+		if (mSettings.isPicking()) {
+			this.pickColorPaint(gl);
+			glshape.draw(gl);
+			lifetime++;
+			return;
+		}
+
+		/*
+		 * If not picking paint it
+		 * 
 		 * Materials
 		 */
-		
 		final ArrayList<Material> ms = materials;
 		if (materials != null) {
 			for (Material material : ms) {
-				material.draw(gl);
+				if (selected) {
+					material.drawSelected(gl);
+				} else {
+					material.draw(gl);
+				}
 			}
 		}
-		
+
 		glshape.draw(gl);
-		
-		
+
 		/*
 		 * kill the materials
 		 */
@@ -87,7 +102,7 @@ public class SGShape extends SGAbstractShape {
 				material.killDraw(gl);
 			}
 		}
-		
+
 		// update lifetime
 		lifetime++;
 	}

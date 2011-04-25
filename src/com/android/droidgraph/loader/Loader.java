@@ -20,15 +20,10 @@ import android.content.res.AssetManager;
 import android.util.Log;
 
 import com.android.droidgraph.R;
-import com.android.droidgraph.util.Settings;
 
 public class Loader implements Serializable {
 	private static final long serialVersionUID = -5579981347245166159L;
-	private static String mTex;
-	private static int intTex;
-	private float moonangle = 0f;
 	private int IdxCnt;
-	private float langle = 0f;
 	public static boolean useshading = false;
 	public static float shadowcolor = 0.50f;
 
@@ -104,7 +99,7 @@ public class Loader implements Serializable {
 		try {
 			InputStream fileIn = mContext.getResources().openRawResource(R.drawable.test);
 
-			AssetManager am = Settings.context.getAssets();
+			AssetManager am = mContext.getAssets();
 			String str;
 			String[] tmp;
 			String[] ftmp;

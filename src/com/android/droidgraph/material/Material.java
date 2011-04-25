@@ -1,10 +1,10 @@
 package com.android.droidgraph.material;
 
-import com.android.droidgraph.shape.GLShape;
+import com.android.droidgraph.scene.SGAbstractShape;
 
 public class Material extends AMaterial{
 	
-	public Material(GLShape shape, float[] position, float[] ambient, float[] diffuse, float[] specular, float shininess) {
+	public Material(SGAbstractShape shape, float[] position, float[] ambient, float[] diffuse, float[] specular, float shininess) {
 		super(shape);
 //		First init the buffers
 		initBuffers();
@@ -21,8 +21,10 @@ public class Material extends AMaterial{
 		
 	}
 	
-	public Material(GLShape shape) {
-		super(shape);
+	public Material(SGAbstractShape node) {
+		super(node);
 		initBuffers();			// init with default params
 	}
+
+
 }

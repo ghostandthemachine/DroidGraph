@@ -8,7 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.opengl.GLUtils;
 
-import com.android.droidgraph.shape.GLShape;
+import com.android.droidgraph.scene.SGAbstractShape;
 import com.android.droidgraph.util.Settings;
 
 public class TextureMaterial extends Material {
@@ -16,12 +16,15 @@ public class TextureMaterial extends Material {
 	private int openGLTextureID;
 	private int resource;
 	
-	public TextureMaterial(GLShape glshape) {
-		super(glshape);
+	private Settings mSettings;
+	
+	public TextureMaterial(SGAbstractShape node, Settings settings) {
+		super(node);
+		mSettings = settings;
 	}
 	
-	public TextureMaterial(GLShape glshape, int resource) {
-		super(glshape);
+	public TextureMaterial(SGAbstractShape node, int resource) {
+		super(node);
 		this.resource = resource;
 	}
 	
@@ -31,12 +34,12 @@ public class TextureMaterial extends Material {
 	
 	@Override
 	public void loadMaterial(GL10 gl) {
-		loadTexture(gl, Settings.context);
+		load(gl, mSettings.getContext());
 	}
 
 	// Will load a texture out of a drawable resource file, and return an OpenGL
 	// texture ID:
-	public void loadTexture(GL10 gl, Context context) {
+	public void load(GL10 gl, Context context) {
 
 		// In which ID will we be storing this texture?
 		int id = newTextureID(gl);
@@ -109,7 +112,7 @@ public class TextureMaterial extends Material {
 		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		gl.glTexEnvf(GL10.GL_FRONT, GL10.GL_AMBIENT_AND_DIFFUSE, GL10.GL_ADD);
 		//Point to our buffers
-		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, parent.getTextureBuffer());
+		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, glshape.getTextureBuffer());
 	}
 	
 	@Override

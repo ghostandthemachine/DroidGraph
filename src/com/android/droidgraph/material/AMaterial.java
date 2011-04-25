@@ -6,8 +6,10 @@ import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import com.android.droidgraph.scene.SGAbstractShape;
 import com.android.droidgraph.shape.GLShape;
 import com.android.droidgraph.util.GLH;
+import com.android.droidgraph.util.SGColorI;
 
 public class AMaterial implements IMaterial {
 
@@ -24,17 +26,18 @@ public class AMaterial implements IMaterial {
 	private FloatBuffer specularBuffer;
 	private FloatBuffer positionBuffer;
 
-	protected GLShape parent;
+	protected GLShape glshape;
+	protected SGAbstractShape parent;
 	protected Material defaultMaterial = GLH.getDefaultMaterial();
 	
 	protected boolean enabled = true;
 
-	public AMaterial(GLShape glshape) {
-		parent = glshape;
+	public AMaterial(SGAbstractShape node) {
+		this.parent = node;
 	}
 
 	public void setShape(GLShape glshape) {
-		parent = glshape;
+		this.glshape = glshape;
 	}
 
 	/*
@@ -235,7 +238,7 @@ public class AMaterial implements IMaterial {
 
 	@Override
 	public void draw(GL10 gl) {
-		if (parent != null) {
+		if (glshape != null) {
 			if(enabled) {
 			gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT,
 					ambientBuffer);
@@ -250,8 +253,18 @@ public class AMaterial implements IMaterial {
 	}
 	
 	@Override
+	public void drawSelected(GL10 gl) {
+		int[] color = parent.getColorID().color;
+		if (glshape != null) {
+			if(enabled) {
+			gl.glColor4f(color[0], color[1], color[2], color[3]);
+			}
+		}
+	}
+	
+	@Override
 	public void killDraw(GL10 gl) {
-		if (parent != null) {
+		if (glshape != null) {
 			if(enabled) {
 			gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT,
 					defaultMaterial.getAmbientBuffer());
