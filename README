@@ -1,0 +1,20 @@
+This project is intended to be a light weight, flexible, 3D OpenGL ES scene graph for use, initially, with the Android platform. 
+
+Current features include:
+	- node based scene graph
+	- open gl primitive library 
+	- open gl object loading classes for Android
+	- easy transformation management system
+	- node types include
+		> parents and groups
+		> 2D and 3D shape nodes
+		> translation, rotation, scale, shear
+		> fxshape and fxgroup for managing more dynamic groups
+		> lights
+		> materials
+		
+Immediate project goals include:
+	- implement picking system
+	- camera nodes
+	- effects 
+	- and more... 
