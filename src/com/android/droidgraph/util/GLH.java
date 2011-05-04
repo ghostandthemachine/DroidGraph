@@ -85,15 +85,5 @@ public class GLH {
 		view.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
 		view.getHolder().setFormat(PixelFormat.TRANSLUCENT);
 	}
-	
-	
-	public static Material defaultMaterial;
-	
-	public static Material getDefaultMaterial() {
-		return defaultMaterial;
-	}
-	public static void setDefaultMaterial(Material material) {
-		defaultMaterial = material;
-	}
 
 }

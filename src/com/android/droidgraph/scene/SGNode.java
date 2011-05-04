@@ -14,12 +14,7 @@ import com.android.droidgraph.event.GraphNodeEvent;
 import com.android.droidgraph.geom.BoundingBox;
 import com.android.droidgraph.geom.Bounds;
 import com.android.droidgraph.geom.Transform3D;
-import com.android.droidgraph.material.IMaterial;
-import com.android.droidgraph.material.Material;
-import com.android.droidgraph.material.TextureMaterial;
-import com.android.droidgraph.util.GLH;
 import com.android.droidgraph.util.PrintLogUtil;
-import com.android.droidgraph.util.SGColorI;
 import com.android.droidgraph.vecmath.Point3d;
 
 public abstract class SGNode {
@@ -449,7 +444,7 @@ public abstract class SGNode {
 	 *            Note: not sure yet if I want to attempt render clipping in
 	 *            opengl es... --- ignore the dirtyRegion for now ---
 	 */
-	final void render(GL10 gl) {
+	public final void render(GL10 gl) {
 		if (!isVisible()) {
 			return;
 		}
@@ -509,6 +504,60 @@ public abstract class SGNode {
 		 */
 		gl.glPopMatrix();
 
+	}
+	
+	public void renderColorID(GL10 gl) {
+		gl.glPushMatrix();
+		
+		/*
+		 * run scale events
+		 */
+		if (scaleEvents != null) {
+			final HashSet<GraphNodeEvent> events = scaleEvents;
+			for (GraphNodeEvent scale : events) {
+				scale.run();
+				
+			}
+		}
+
+		/*
+		 * run translation events
+		 */
+		if (translationEvents != null) {
+			final HashSet<GraphNodeEvent> events = translationEvents;
+			for (GraphNodeEvent translation : events) {
+				translation.run();
+			}
+		}
+		
+		/*
+		 * run rotation events
+		 */
+		if (rotationEvents != null) {
+			final HashSet<GraphNodeEvent> events = rotationEvents;
+			for (GraphNodeEvent rotation : events) {
+				rotation.run();
+			}
+		}
+		
+		
+		/*
+		 * render children if a parent
+		 */
+		if (this instanceof SGParent) {
+			for (SGNode child : ((SGParent) this).getChildren()) {
+				child.renderColorID(gl);
+			}
+			
+		/*
+		 * else, paint if you are a shape
+		 */
+		} else if (this instanceof SGAbstractShape) {
+			((SGAbstractShape) this).paintColorID(gl);
+		}
+		
+		
+		gl.glPopMatrix();
 	}
 
 	

@@ -7,13 +7,18 @@ import com.android.droidgraph.fx.FXGroup;
 import com.android.droidgraph.fx.FXShape;
 import com.android.droidgraph.material.Material;
 import com.android.droidgraph.primitive.Cube;
+import com.android.droidgraph.util.Settings;
 
 public class RotatingCube extends FXGroup{
 	
-	FXShape cubeOne = new FXShape();
-	FXShape cubeTwo = new FXShape();
+	FXShape cubeOne;
+	FXShape cubeTwo;
 	
-	public RotatingCube() {
+	public RotatingCube(Settings settings) {
+		
+		cubeOne = new FXShape(settings);
+		cubeTwo = new FXShape(settings);
+		
 		initFXShape(cubeOne);
 		initFXShape(cubeTwo);
 		createAnimations();

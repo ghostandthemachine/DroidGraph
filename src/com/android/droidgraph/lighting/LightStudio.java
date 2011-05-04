@@ -50,14 +50,14 @@ public class LightStudio {
 		numLights++;
 	}
 	
-	public void draw(GL10 gl) {
+	public void render(GL10 gl) {
 		// Check if the light flag has been set to enable/disable lighting
 		if (lightEnabled) {
 			gl.glEnable(GL10.GL_LIGHTING);
 		} 
 	}
 	
-	public void killDraw(GL10 gl) {
+	public void killRender(GL10 gl) {
 		// anything that needs to happen at the end
 		if(lightEnabled) {
 			gl.glDisable(GL10.GL_LIGHTING);

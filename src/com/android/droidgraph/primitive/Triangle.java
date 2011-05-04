@@ -3,98 +3,84 @@ package com.android.droidgraph.primitive;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
 import com.android.droidgraph.shape.GLShape;
 
-/**
- * This class is an object representation of a Triangle containing the vertex
- * information, color information and drawing functionality, which is called by
- * the renderer.
- * 
- * @author Savas Ziplies (nea/INsanityDesign)
- */
-public class Triangle extends GLShape {
+public class Triangle extends GLShape{
+    public Triangle() {
 
-	/** The buffer holding the vertices */
-	private FloatBuffer vertexBuffer;
-	/** The buffer holding the colors */
-	private FloatBuffer colorBuffer;
+        // Buffers to be passed to gl*Pointer() functions
+        // must be direct, i.e., they must be placed on the
+        // native heap where the garbage collector cannot
+        // move them.
+        //
+        // Buffers with multi-byte datatypes (e.g., short, int, float)
+        // must have their byte order set to native order
 
-	/** The initial vertex definition */
-	private float vertices[] = { 0.0f, 1.0f, 0.0f, // Top
-			-1.0f, -1.0f, 0.0f, // Bottom Left
-			1.0f, -1.0f, 0.0f // Bottom Right
-	};
+        ByteBuffer vbb = ByteBuffer.allocateDirect(VERTS * 3 * 4);
+        vbb.order(ByteOrder.nativeOrder());
+        mFVertexBuffer = vbb.asFloatBuffer();
 
-	/** The initial color definition */
-	private float colors[] = { 1.0f, 0.0f, 0.0f, 1.0f, // Set The Color To Red,
-														// last value 100%
-														// luminance
-			0.0f, 1.0f, 0.0f, 1.0f, // Set The Color To Green, last value 100%
-									// luminance
-			0.0f, 0.0f, 1.0f, 1.0f // Set The Color To Blue, last value 100%
-									// luminance
-	};
+        ByteBuffer tbb = ByteBuffer.allocateDirect(VERTS * 2 * 4);
+        tbb.order(ByteOrder.nativeOrder());
+        mTexBuffer = tbb.asFloatBuffer();
 
-	/**
-	 * The Triangle constructor.
-	 * 
-	 * Initiate the buffers.
-	 */
-	public Triangle() {
-		//
-		ByteBuffer byteBuf = ByteBuffer.allocateDirect(vertices.length * 4);
-		byteBuf.order(ByteOrder.nativeOrder());
-		vertexBuffer = byteBuf.asFloatBuffer();
-		vertexBuffer.put(vertices);
-		vertexBuffer.position(0);
+        ByteBuffer ibb = ByteBuffer.allocateDirect(VERTS * 2);
+        ibb.order(ByteOrder.nativeOrder());
+        mIndexBuffer = ibb.asShortBuffer();
 
-		//
-		byteBuf = ByteBuffer.allocateDirect(colors.length * 4);
-		byteBuf.order(ByteOrder.nativeOrder());
-		colorBuffer = byteBuf.asFloatBuffer();
-		colorBuffer.put(colors);
-		colorBuffer.position(0);
-	}
+        // A unit-sided equalateral triangle centered on the origin.
+        float[] coords = {
+                // X, Y, Z
+                -0.5f, -0.25f, 0,
+                 0.5f, -0.25f, 0,
+                 0.0f,  0.559016994f, 0
+        };
 
-	/**
-	 * The object own drawing function. Called from the renderer to redraw this
-	 * instance with possible changes in values.
-	 * 
-	 * @param gl
-	 *            - The GL Context
-	 */
-	public void draw(GL10 gl) {
-		// Set the face rotation
-		gl.glFrontFace(GL10.GL_CW);
+        for (int i = 0; i < VERTS; i++) {
+            for(int j = 0; j < 3; j++) {
+                mFVertexBuffer.put(coords[i*3+j] * 2.0f);
+            }
+        }
 
-		// Point to our buffers
-		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer);
-		gl.glColorPointer(4, GL10.GL_FLOAT, 0, colorBuffer);
+        for (int i = 0; i < VERTS; i++) {
+            for(int j = 0; j < 2; j++) {
+                mTexBuffer.put(coords[i*3+j] * 2.0f + 0.5f);
+            }
+        }
 
-		// Enable the vertex and color state
-		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-		gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
+        for(int i = 0; i < VERTS; i++) {
+            mIndexBuffer.put((short) i);
+        }
 
-		// Draw the vertices as triangles
-		gl.glDrawArrays(GL10.GL_TRIANGLES, 0, vertices.length / 3);
+        mFVertexBuffer.position(0);
+        mTexBuffer.position(0);
+        mIndexBuffer.position(0);
+    }
 
-		// Disable the client state before leaving
-		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
-		gl.glDisableClientState(GL10.GL_COLOR_ARRAY);
-	}
+    public void draw(GL10 gl) {
+        gl.glFrontFace(GL10.GL_CCW);
+        gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mFVertexBuffer);
+//        gl.glEnable(GL10.GL_TEXTURE_2D);
+//        gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, mTexBuffer);
+        gl.glDrawElements(GL10.GL_TRIANGLE_STRIP, VERTS, GL10.GL_UNSIGNED_SHORT, mIndexBuffer);
+    }
 
+    private final static int VERTS = 3;
+
+    private FloatBuffer mFVertexBuffer;
+    private FloatBuffer mTexBuffer;
+    private ShortBuffer mIndexBuffer;
 	@Override
 	public void loadGLTexture() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public FloatBuffer getTextureBuffer() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

@@ -1,5 +1,7 @@
 package com.android.droidgraph.fx;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import com.android.droidgraph.scene.SGGroup;
 import com.android.droidgraph.scene.SGTransform;
 import com.android.droidgraph.vecmath.Vector3f;
@@ -163,4 +165,5 @@ public class FXGroup extends SGGroup{
 	public void scaleBy(float sx, float sy, float sz) {
 		setScale(scaleX += sx, scaleY += sy, scaleZ += sz);
 	}
+
 }

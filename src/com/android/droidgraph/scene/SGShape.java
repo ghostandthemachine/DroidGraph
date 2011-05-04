@@ -1,7 +1,5 @@
 package com.android.droidgraph.scene;
 
-import java.util.ArrayList;
-
 import javax.microedition.khronos.opengles.GL10;
 
 import android.graphics.drawable.shapes.Shape;
@@ -26,8 +24,8 @@ public class SGShape extends SGAbstractShape {
 
 	private long lifetime = 0;
 
-	public SGShape() {
-		mSettings = Settings.getSceneSettingsInstance();
+	public SGShape(Settings settings) {
+		mSettings = settings;
 	}
 
 	/**
@@ -67,23 +65,12 @@ public class SGShape extends SGAbstractShape {
 		}
 
 		/*
-		 * if picking, simple render and return
-		 */
-		if (mSettings.isPicking()) {
-			this.pickColorPaint(gl);
-			glshape.draw(gl);
-			lifetime++;
-			return;
-		}
-
-		/*
 		 * If not picking paint it
 		 * 
 		 * Materials
 		 */
-		final ArrayList<Material> ms = materials;
 		if (materials != null) {
-			for (Material material : ms) {
+			for (Material material : materials) {
 				if (selected) {
 					material.drawSelected(gl);
 				} else {
@@ -98,13 +85,22 @@ public class SGShape extends SGAbstractShape {
 		 * kill the materials
 		 */
 		if (materials != null) {
-			for (Material material : ms) {
+			for (Material material : materials) {
 				material.killDraw(gl);
 			}
 		}
 
 		// update lifetime
 		lifetime++;
+	}
+	
+	public void paintColorID(GL10 gl) {
+		if (glshape == null) {
+			return;
+		} else {
+			this.pickColorPaint(gl);
+			glshape.draw(gl);
+		}
 	}
 
 	@Override
@@ -115,9 +111,9 @@ public class SGShape extends SGAbstractShape {
 		return bounds;
 	}
 
-	private void accumulate(GLShape s) {
-		this.bounds.combine(s.getBounds());
-	}
+//	private void accumulate(GLShape s) {
+//		this.bounds.combine(s.getBounds());
+//	}
 
 	public long getLifeTime() {
 		return lifetime;

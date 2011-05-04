@@ -8,8 +8,6 @@ import javax.microedition.khronos.opengles.GL10;
 
 import com.android.droidgraph.scene.SGAbstractShape;
 import com.android.droidgraph.shape.GLShape;
-import com.android.droidgraph.util.GLH;
-import com.android.droidgraph.util.SGColorI;
 
 public class AMaterial implements IMaterial {
 
@@ -28,7 +26,7 @@ public class AMaterial implements IMaterial {
 
 	protected GLShape glshape;
 	protected SGAbstractShape parent;
-	protected Material defaultMaterial = GLH.getDefaultMaterial();
+	protected Material defaultMaterial = new Material(null);
 	
 	protected boolean enabled = true;
 
@@ -38,6 +36,11 @@ public class AMaterial implements IMaterial {
 
 	public void setShape(GLShape glshape) {
 		this.glshape = glshape;
+	}
+	
+	public void setParent(SGAbstractShape node) {
+		parent = node;
+		glshape = node.getShape();
 	}
 
 	/*
@@ -50,8 +53,6 @@ public class AMaterial implements IMaterial {
 		ambient[2] = blue;
 		ambient[3] = alpha;
 		updateAmbientBuffer();
-		
-		defaultMaterial = GLH.defaultMaterial;
 	}
 
 	public void setAmbient(float[] ambient) {
@@ -124,8 +125,7 @@ public class AMaterial implements IMaterial {
 	/*
 	 * Ambient and Diffuse
 	 */
-	public void setAmbientAndDiffuse(float red, float green, float blue,
-			float alpha) {
+	public void setAmbientAndDiffuse(float red, float green, float blue, float alpha) {
 		setAmbient(red, green, blue, alpha);
 		setDiffuse(red, green, blue, alpha);
 	}
@@ -240,14 +240,10 @@ public class AMaterial implements IMaterial {
 	public void draw(GL10 gl) {
 		if (glshape != null) {
 			if(enabled) {
-			gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT,
-					ambientBuffer);
-			gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_DIFFUSE,
-					diffuseBuffer);
-			gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_SPECULAR,
-					specularBuffer);
-			gl.glMaterialf(GL10.GL_FRONT_AND_BACK, GL10.GL_SHININESS,
-					Math.min(shininess, 128));
+			gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT, ambientBuffer);
+			gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_DIFFUSE, diffuseBuffer);
+			gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_SPECULAR, specularBuffer);
+			gl.glMaterialf(GL10.GL_FRONT_AND_BACK, GL10.GL_SHININESS, Math.min(shininess, 128));
 			}
 		}
 	}

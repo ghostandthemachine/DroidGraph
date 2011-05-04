@@ -4,6 +4,7 @@ import java.util.HashSet;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 
 import com.android.droidgraph.scene.SGAbstractShape;
@@ -13,7 +14,7 @@ import com.android.droidgraph.util.PrintLogUtil;
 import com.android.droidgraph.util.Settings;
 
 public class Run extends Activity {
-	SGView view;
+	SGView mView;
 	PrintLogUtil log = new PrintLogUtil();
 	
 	Settings mSettings = new Settings();
@@ -23,18 +24,35 @@ public class Run extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-//		Set the global scene instance for passing around
-		Settings.setSceneSettingsInstance(mSettings);
 		
 //		create a new global HashMap for quick picking lookup 
-		Settings.setNodeIDMap(new HashSet<SGAbstractShape>());
+		mSettings.setNodeIDMap(new HashSet<SGAbstractShape>());
 		
-		view = new SGView(this, mSettings);
-		setContentView(view);
-		view.setScene(new TestNode(mSettings));
+		mView = new SGView(this, mSettings);
+		setContentView(mView);
+		
+//		mSettings.setScreenDimensions(mView.getWidth(), mView.getHeight());	
+		mView.setScene(new TestNode(mSettings));
+		
+		
+		DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        mSettings.setScreenDimensions(dm.widthPixels, dm.heightPixels);
+        
 	}
 
 
+	@Override
+	public void onPause() {
+		super.onPause();
+		mView.onPause();
+	}
+	
+	@Override 
+	public void onResume() {
+		super.onResume();
+		mView.onResume();
+	}
 
 
     @Override

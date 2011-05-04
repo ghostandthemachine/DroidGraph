@@ -1,46 +1,55 @@
-package com.android.droidgraph.scene;
+package com.android.droidgraph.renderer;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.HashSet;
-import java.util.Map.Entry;
 
 import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import com.android.droidgraph.lighting.LightStudio;
+import com.android.droidgraph.scene.SGAbstractShape;
+import com.android.droidgraph.scene.SGGroup;
+import com.android.droidgraph.scene.SGNode;
+import com.android.droidgraph.scene.SGView;
 import com.android.droidgraph.util.GLH;
 import com.android.droidgraph.util.PrintLogUtil;
 import com.android.droidgraph.util.SGColorI;
 import com.android.droidgraph.util.SGLog;
 import com.android.droidgraph.util.Settings;
 
-class SGRenderer implements GLSurfaceView.Renderer {
+public class SGRenderer implements GLSurfaceView.Renderer {
 
 	// for debug
 	PrintLogUtil log = new PrintLogUtil();
+	private String TAG = "SGRenderer";
 
-	private float[] background = { 1f, 1f, 1f, 1f };
+	private float[] background = { 0f, 0f, 0f, 1f };
 	private int renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY;
 	private SGGroup sceneGroup;
 	private float lx = 0f;
 	private float ly = 0f;
 
 	private LightStudio mLightStudio;
-	
+
 	private Settings mSettings;
 
 	public SGRenderer(SGView view, Settings settings) {
 		mSettings = settings;
 		mSettings.setRenderer(this);
-		
+
 		mLightStudio = new LightStudio(mSettings);
 
 	}
-	
+
 	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig eglc) {
 		GLH.setGL(gl);
@@ -55,7 +64,7 @@ class SGRenderer implements GLSurfaceView.Renderer {
 		gl.glDepthFunc(GL10.GL_LEQUAL); 			//The Type Of Depth Testing To Do
 		//Perspective Calculations
 		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST); 
-		
+
 		mLightStudio.load(gl);
 		sceneGroup.load(gl);
 	}
@@ -76,31 +85,67 @@ class SGRenderer implements GLSurfaceView.Renderer {
 
 		gl.glMatrixMode(GL10.GL_MODELVIEW); // Select The Modelview Matrix
 		gl.glLoadIdentity(); // Reset The Modelview Matrix
+		mSettings.setScreenDimensions(width, height);
 	}
 
 	@Override
 	public void onDrawFrame(GL10 gl) {
+		checkGLError(gl);
 		// Clear Screen And Depth Buffer
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 		gl.glLoadIdentity(); // Reset The Current Modelview Matrix
 		gl.glClearColor(background[0],background[1],background[2],background[3]);
 		GLU.gluLookAt(gl, lx, ly, 5, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
 
-//		mLightStudio.draw(gl);
-		
+		mLightStudio.render(gl);
+
 		// Draw the root of the scene
 		sceneGroup.render(gl);
-		
-		// call any kill methods to end the drawing cycle
-//		mLightStudio.killDraw(gl);
 
+		// call any kill methods to end the drawing cycle
+		mLightStudio.killRender(gl);
+		
+		if (mSettings.pick()) {
+			pickReadPixels(gl, 1, 1);
+		}
+
+	}
+
+	private void pickReadPixels(GL10 gl, int height, int width) {
+		boolean screenshot = mSettings.pick();
+
+		float x = mSettings.getPickPoint()[0];
+
+		float y = mSettings.getPickPoint()[1];
+
+		if (screenshot) {
+			int screenshotSize = 1;
+			ByteBuffer bb = ByteBuffer.allocateDirect(screenshotSize * 4);
+			bb.order(ByteOrder.nativeOrder());
+
+			gl.glReadPixels((int) x, mSettings.getScreenHeight() - (int) y, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, bb);
+
+			int pixelsBuffer[] = new int[screenshotSize];
+			bb.asIntBuffer().get(pixelsBuffer);
+			bb = null;
+			Bitmap bitmap = Bitmap.createBitmap(width, height,
+					Bitmap.Config.RGB_565);
+			bitmap.setPixels(pixelsBuffer, screenshotSize - width, -width, 0,
+					0, width, height);
+
+			Log.d(TAG, "" + bitmap.getPixel(0, 0));
+
+			pixelsBuffer = null;
+
+			mSettings.pick(false);
+		}
 	}
 
 	public void setSceneGroup(SGNode group) {
 		// SGGroup sggroup = (SGGroup) group;
 		sceneGroup = (SGGroup) group;
 	}
-	
+
 	public void setLookAtX(float x) {
 		this.lx = x;
 	}
@@ -120,13 +165,13 @@ class SGRenderer implements GLSurfaceView.Renderer {
 	public void setContext(Context context) {
 		mSettings.setContext(context);
 	}
-	
+
 	public LightStudio getLightStudio() {
 		return mLightStudio;
 	}
 
 	public void processSelection(MotionEvent e, SGColorI inputColor) {
-		HashSet<SGAbstractShape> gNodeIDMap = Settings.getNodeIDMap();
+		HashSet<SGAbstractShape> gNodeIDMap = mSettings.getNodeIDMap();
 		for(SGAbstractShape node : gNodeIDMap) {
 			if(inputColor.equals(node.getColorID())){
 				node.setSelected(true);
@@ -134,7 +179,13 @@ class SGRenderer implements GLSurfaceView.Renderer {
 		}
 	}
 
-	
-	
+	static void checkGLError(GL gl) {
+		int error = ((GL10) gl).glGetError();
+		if (error != GL10.GL_NO_ERROR) {
+			throw new RuntimeException("GLError 0x"
+					+ Integer.toHexString(error));
+		}
+	}
+
 
 }

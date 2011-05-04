@@ -16,7 +16,7 @@ import com.android.droidgraph.shape.GLShape;
  * 
  * @author Savas Ziplies (nea/INsanityDesign)
  */
-public class Square extends GLShape{
+public class Rect extends GLShape{
 		
 	/** The buffer holding the vertices */
 	private FloatBuffer vertexBuffer;
@@ -38,7 +38,7 @@ public class Square extends GLShape{
 	 * 
 	 * Initiate the buffers.
 	 */
-	public Square(float tx, float ty, float w, float h) {
+	public Rect(float tx, float ty, float w, float h) {
 		
 		vertices = new float[]{
 				tx, ty + h, 0f,
@@ -74,18 +74,10 @@ public class Square extends GLShape{
 		
 		//Point to our vertex buffer
 		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer);
-		gl.glColorPointer(4, GL10.GL_FLOAT, 0, colorBuffer);
-		
-		//Enable vertex buffer
-		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-		gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
 		
 		//Draw the vertices as triangle strip
 		gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, vertices.length / 3);
-		
-		//Disable the client state before leaving
-		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
-		gl.glDisableClientState(GL10.GL_COLOR_ARRAY);
+
 		
 	}
 

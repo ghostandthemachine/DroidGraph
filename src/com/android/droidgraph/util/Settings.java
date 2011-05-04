@@ -5,30 +5,37 @@ import java.util.HashSet;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.opengl.GLSurfaceView;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
+import com.android.droidgraph.PixelBuffer;
 import com.android.droidgraph.hardware.DGCamera;
 import com.android.droidgraph.lighting.LightStudio;
 import com.android.droidgraph.scene.SGAbstractShape;
-import com.android.droidgraph.scene.SGNode;
 
 public class Settings implements SurfaceHolder.Callback {
 
-	private static Settings gSettingsInstance;
+	private HashSet<SGAbstractShape> nodeIDMap;
 
-	private static HashSet<SGAbstractShape> nodeIDMap;
+	private GL10 gl;
+	private Context context;
+	private int width = 1280;
+	private int height = 696;
 
-	private GL10 gl = null;
-	private Context context = null;
-	private int width = 0;
-	private int height = 0;
+	private int lastScreenArea = width + height;
 
 	private boolean picking = false;
 
-	private GLSurfaceView.Renderer renderer = null;
+	private GLSurfaceView.Renderer renderer;
 
-	public GLSurfaceView view = null;
+	public GLSurfaceView mView;;
+
+	private PixelBuffer mPixelBuffer;
+
+	private String TAG = "Settings";
 
 	/*
 	 * Lights
@@ -38,7 +45,7 @@ public class Settings implements SurfaceHolder.Callback {
 	/*
 	 * Camera
 	 */
-//	private DGCamera mDGCamera = new DGCamera();
+	// private DGCamera mDGCamera = new DGCamera();
 
 	public void setGL(GL10 gl) {
 		this.gl = gl;
@@ -58,6 +65,9 @@ public class Settings implements SurfaceHolder.Callback {
 
 	public void setRenderer(GLSurfaceView.Renderer renderer) {
 		this.renderer = renderer;
+
+//		mPixelBuffer = new PixelBuffer(width, height);
+//		mPixelBuffer.setRenderer(this.renderer);
 	}
 
 	public GLSurfaceView.Renderer getRenderer() {
@@ -65,8 +75,23 @@ public class Settings implements SurfaceHolder.Callback {
 	}
 
 	public void setScreenDimensions(int width, int height) {
-		this.width = width;
-		this.height = height;
+		if (lastScreenArea != width + height) {
+			if (width + height > 10) {
+				this.width = width;
+				this.height = height;
+//				mPixelBuffer.setDimensions(this.width, this.height);
+				lastScreenArea = width + height;
+//				Log.d("Settings.setScreenDim()", width + "  " + height);
+			}
+		}
+	}
+
+	public int getScreenWidth() {
+		return width;
+	}
+
+	public int getScreenHeight() {
+		return height;
 	}
 
 	public void setLightStudio(LightStudio lightStudio) {
@@ -78,30 +103,31 @@ public class Settings implements SurfaceHolder.Callback {
 	}
 
 	public void setView(GLSurfaceView view) {
-		this.view = view;
+		this.mView = view;
 	}
 
 	public GLSurfaceView getGLSurfaceView() {
-		return view;
+		return mView;
 	}
 
 	public DGCamera getCamera() {
-//		return mDGCamera;
+		// return mDGCamera;
 		return null;
 	}
 
 	public void startCameraFeed() {
-//		mDGCamera.start();
+		// mDGCamera.start();
 	}
 
 	public void stopCameraFeed() {
-//		mDGCamera.stop();
+		// mDGCamera.stop();
 	}
 
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
 			int height) {
-
+		this.width = width;
+		this.height = height;
 	}
 
 	@Override
@@ -114,33 +140,50 @@ public class Settings implements SurfaceHolder.Callback {
 		stopCameraFeed();
 	}
 
-	public void picking(boolean pick) {
-		picking = pick;
+
+	private Bitmap getPickBitmap() {
+//		return mPixelBuffer.getBitmap();
+		return null;
 	}
 
-	public boolean isPicking() {
+	public boolean pick() {
 		return picking;
 	}
-
-	public static Settings getSceneSettingsInstance() {
-		return gSettingsInstance;
+	
+	private int pickX;
+	private int pickY;
+	
+	public void setPickPoint(MotionEvent event) {
+		pickX = (int) event.getX();
+		pickY = (int) event.getY();
 	}
 
-	public static void setSceneSettingsInstance(Settings sceneSettings) {
-		gSettingsInstance = sceneSettings;
+	public int[] getPickPoint() {
+		return new int[] {pickX, pickY};
+	}
+	
+	public Settings getSceneSettingsInstance() {
+		return this;
 	}
 
-	public static void setNodeIDMap(HashSet<SGAbstractShape> hashSet) {
+	public void setNodeIDMap(HashSet<SGAbstractShape> hashSet) {
 		nodeIDMap = hashSet;
 	}
 
-	public static HashSet<SGAbstractShape> getNodeIDMap() {
+	public HashSet<SGAbstractShape> getNodeIDMap() {
 		return nodeIDMap;
 	}
 
-//	public static void applySelectionMaterial(GL10 gl, SGColorI color) {
-//		final GL10 gl10 = gl;
-//		gl10.glColor4f(color.getRedF(), color.getGreenF(), color.getBlueF(), color.getAlphaF());
-//	}
+	public void pick(boolean b) {
+		picking = b;
+	}
+
+	// public void applySelectionMaterial(GL10 gl, SGColorI color) {
+	// final GL10 gl10 = gl;
+	// gl10.glColor4f(color.getRedF(), color.getGreenF(), color.getBlueF(),
+	// color.getAlphaF());
+	// }
+	
+	
 
 }

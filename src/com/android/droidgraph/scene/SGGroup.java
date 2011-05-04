@@ -19,6 +19,7 @@ public class SGGroup extends SGParent {
 	private List<SGNode> childrenUnmodifiable;
 	
 	protected long lifetime = 0;
+	
 
 	public final List<SGNode> getChildren() {
 		if (children == null) {

@@ -23,6 +23,8 @@ public abstract class SGLeaf extends SGNode {
 
     public abstract void paint(GL10 gl);
     
+    public abstract void paintColorID(GL10 gl);
+    
 
 
     /**

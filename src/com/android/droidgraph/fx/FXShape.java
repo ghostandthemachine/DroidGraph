@@ -2,6 +2,7 @@ package com.android.droidgraph.fx;
 
 import com.android.droidgraph.scene.SGShape;
 import com.android.droidgraph.scene.SGTransform;
+import com.android.droidgraph.util.Settings;
 import com.android.droidgraph.vecmath.Vector3f;
 
 public class FXShape extends SGShape {
@@ -21,7 +22,8 @@ public class FXShape extends SGShape {
 	private float scaleY = 1;
 	private float scaleZ = 1;
 	
-	public FXShape() {
+	public FXShape(Settings settings) {
+		super(settings);
 		translate = SGTransform.createTranslation(0, 0, 0, this);
 		rotate = SGTransform.createRotation(0, 0, 0, this);
 		scale = SGTransform.createScale(1, 1, 1, this);

@@ -17,30 +17,37 @@ public abstract class SGAbstractShape extends SGLeaf {
 	};
 
 	public static SGColorI gColorID = new SGColorI(0, 0, 0, 0);
-	private SGColorI m_colorID = new SGColorI();
+	protected SGColorI m_colorID = new SGColorI();
 
 	protected ArrayList<Material> materials = new ArrayList<Material>();
 
 	private boolean hasTexture = false;
 	protected boolean selected;;
+	
+	protected String TAG = "SGAbstractShape";
 
 	public SGAbstractShape() {
 		this(false);
 
+		gColorID.color[0]++;
+		if (gColorID.color[0] > 255) {
+			gColorID.color[0] = 255;
+			gColorID.color[1]++;
+			if (gColorID.color[1] > 255) {
+				gColorID.color[1] = 255;
+				gColorID.color[2]++;
+				if(gColorID.color[2] > 255) {
+					gColorID.color[2] = 255;
+					gColorID.color[3]++;
+				}
+			}
+		}
+		
 		// Set up this nodes unique color id
 		m_colorID.color[0] = gColorID.color[0];
 		m_colorID.color[1] = gColorID.color[1];
 		m_colorID.color[2] = gColorID.color[2];
-
-		gColorID.color[0]++;
-		if (gColorID.color[0] > 255) {
-			gColorID.color[0] = 0;
-			gColorID.color[1]++;
-			if (gColorID.color[1] > 255) {
-				gColorID.color[1] = 0;
-				gColorID.color[2]++;
-			}
-		}
+		m_colorID.color[3] = gColorID.color[3];
 	}
 
 	public void pickColorPaint(GL10 gl) {
@@ -63,6 +70,7 @@ public abstract class SGAbstractShape extends SGLeaf {
 
 	public void addMaterial(Material material) {
 		addMaterial(0, material);
+		material.setParent(this);
 	}
 
 	public void addMaterial(int position, Material material) {
@@ -76,6 +84,11 @@ public abstract class SGAbstractShape extends SGLeaf {
 	@Override
 	public void paint(GL10 gl) {
 
+	}
+	
+	@Override
+	public void paintColorID(GL10 gl) {
+		
 	}
 
 	public BoundingBox getBounds(Transform3D transform) {
@@ -109,4 +122,5 @@ public abstract class SGAbstractShape extends SGLeaf {
 	public boolean isSelected() {
 		return selected;
 	}
+
 }

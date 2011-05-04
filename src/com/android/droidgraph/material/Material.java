@@ -25,6 +25,11 @@ public class Material extends AMaterial{
 		super(node);
 		initBuffers();			// init with default params
 	}
+	
+	public Material() {
+		super(null);
+		initBuffers();
+	}
 
 
 }

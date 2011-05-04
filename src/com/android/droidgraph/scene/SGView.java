@@ -2,68 +2,52 @@ package com.android.droidgraph.scene;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-
-import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.opengl.GLSurfaceView;
 import android.os.Environment;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
-import com.android.droidgraph.material.Material;
-import com.android.droidgraph.util.GLH;
-import com.android.droidgraph.util.PrintLogUtil;
+import com.android.droidgraph.renderer.BufferedRenderer;
+import com.android.droidgraph.renderer.SGRenderer;
 import com.android.droidgraph.util.Settings;
 
 public class SGView extends GLSurfaceView {
 
-	PrintLogUtil log = new PrintLogUtil();
-
+//	private String TAG = "SGRenderer";
 	// the renderer that handles all drawing
-	private final SGRenderer mRenderer;
-
+	private SGRenderer mRenderer;
+	private BufferedRenderer mBufferedRenderer;
 	private SGGroup sceneGroup;
-
 	private SGNode scene;
-
 	private Settings mSettings;
-
-	private IntBuffer viewportBuffer;
 	private int[] viewport = new int[4];
-
-	private Bitmap mSavedBM = null;
 	
-
 	public SGView(Context context, Settings settings) {
 		super(context);
+
+		mSettings = settings;
+		mSettings.setContext(context);
+		mSettings.setView(this);
+		
 		mRenderer = new SGRenderer(this, settings);
+		mBufferedRenderer = new BufferedRenderer(this, settings);
+		
+		mBufferedRenderer.setContext(context);
 		mRenderer.setContext(context);
-		setRenderer(mRenderer);
+		
+		setRenderer(mBufferedRenderer);
+//		setRenderer(mRenderer);
 
 		// Request focus, otherwise buttons won't react
 		this.requestFocus();
 		this.setFocusableInTouchMode(true);
 
-		mSettings = settings;
-		mSettings.setContext(context);
-		mSettings.setView(this);
-		GLH.setDefaultMaterial(new Material(null));
-
 		viewport[0] = 0;
 		viewport[2] = 0;
 		viewport[2] = viewport[3] = 1;
-
-		log.pl("SGView viewport", viewport[0], viewport[1], viewport[2],
-				viewport[3]);
-		viewportBuffer = createIntBuffer(viewport);
-
 	}
 
 	@Override
@@ -76,7 +60,7 @@ public class SGView extends GLSurfaceView {
 	@Override
 	public void setRenderMode(int mode) {
 		super.setRenderMode(mode);
-		mRenderer.setRenderMode(mode);
+		mBufferedRenderer.setRenderMode(mode);
 	}
 
 	SGGroup getSceneGroup() {
@@ -108,6 +92,7 @@ public class SGView extends GLSurfaceView {
 		sceneGroup.add(scene);
 		sceneGroup.setParent(this);
 
+		mBufferedRenderer.setSceneGroup(scene);
 		mRenderer.setSceneGroup(scene);
 	}
 
@@ -123,37 +108,8 @@ public class SGView extends GLSurfaceView {
 	@Override
 	public boolean onTouchEvent(MotionEvent e) {
 		handleEvent(e);
-
 		// We handled the event
 		return true;
-	}
-
-	private FloatBuffer createFloatBuffer(float[] in) {
-		ByteBuffer buff = ByteBuffer.allocateDirect(in.length * 4);
-		buff.order(ByteOrder.nativeOrder());
-		FloatBuffer outBuff = buff.asFloatBuffer();
-		outBuff.put(in);
-		outBuff.position(0);
-		return outBuff;
-	}
-
-	private void updateFloatBuffer(FloatBuffer buff, float[] in) {
-		buff.put(in);
-		buff.position(0);
-	}
-
-	private void updateIntBuffer(IntBuffer buff, int[] in) {
-		buff.put(in);
-		buff.position(0);
-	}
-
-	private IntBuffer createIntBuffer(int[] in) {
-		ByteBuffer buff = ByteBuffer.allocateDirect(in.length * 4);
-		buff.order(ByteOrder.nativeOrder());
-		IntBuffer outBuff = buff.asIntBuffer();
-		outBuff.put(in);
-		outBuff.position(0);
-		return outBuff;
 	}
 
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -172,6 +128,7 @@ public class SGView extends GLSurfaceView {
 	}
 
 	/** Show an event in the LogCat view, for debugging */
+	@SuppressWarnings("unused")
 	private void dumpEvent(MotionEvent event) {
 		String names[] = { "DOWN", "UP", "MOVE", "CANCEL", "OUTSIDE",
 				"POINTER_DOWN", "POINTER_UP", "7?", "8?", "9?" };
@@ -195,39 +152,19 @@ public class SGView extends GLSurfaceView {
 				sb.append(";");
 		}
 		sb.append("]");
-		Log.d("TouchEvent info", sb.toString());
+//		Log.d("TouchEvent info", sb.toString());
 	}
 
 	/** Show an event in the LogCat view, for debugging */
 	private void handleEvent(MotionEvent event) {
-		int x = (int) event.getX();
-		int y = (int) event.getY();
 		int action = event.getAction();
 		int actionCode = action & MotionEvent.ACTION_MASK;
 		if (actionCode == 0) {
 			// Paint with colorID color
-			mSettings.picking(true);
-			dumpEvent(event);
-			final GL10 gl = mSettings.getGL();
-
-			int w = viewport[2];
-			int h = viewport[3];
+			mSettings.setPickPoint(event);
+			mSettings.pick(true);
 			
-			ByteBuffer PixelBuffer = ByteBuffer.allocateDirect(4);
-			PixelBuffer.order(ByteOrder.nativeOrder());
-			gl.glReadPixels(x, y, 1, 1, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, PixelBuffer);
-			byte b[] = new byte[4];
-			PixelBuffer.get(b);
-			String key = "" + b[0] + b[1] + b[2];
-			
-			Log.d("HandleEvent", x + "  " + y + "  " + key);
-
-			// Check for selection
-			// mRenderer.processSelection(event, new SGColorI(pixel[0],
-			// pixel[1], pixel[2], pixel[3]));
-
 		} else if (actionCode == 2) {
-			mSettings.picking(false);
 		}
 	}
 
@@ -235,39 +172,7 @@ public class SGView extends GLSurfaceView {
 	    return (byte) ((int) (f * 255f));
 	}
 	
-	public void savePixels(int x, int y, int w, int h, GL10 gl) {
-		if (gl == null)
-			return;
-		synchronized (this) {
-			if (mSavedBM != null) {
-				mSavedBM.recycle();
-				mSavedBM = null;
-			}
-		}
-		int b[] = new int[w * (y + h)];
-		int bt[] = new int[w * h];
-		IntBuffer ib = IntBuffer.wrap(b);
-		ib.position(0);
-		gl.glReadPixels(x, 0, w, y + h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, ib);
-		for (int i = 0, k = 0; i < h; i++, k++) {
-			// OpenGLbitmap is incompatible with Android bitmap
-			// and so, some corrections need to be done.
-			for (int j = 0; j < w; j++) {
-				int pix = b[i * w + j];
-				int pb = (pix >> 16) & 0xff;
-				int pr = (pix << 16) & 0x00ff0000;
-				int pix1 = (pix & 0xff00ff00) | pr | pb;
-				bt[(h - k - 1) * w + j] = pix1;
-			}
-		}
-		Bitmap sb = Bitmap.createBitmap(bt, w, h, Bitmap.Config.ARGB_8888);
-		synchronized (this) {
-			mSavedBM = sb;
-		}
-		int test = sb.getPixel(x, y);
-		Log.d("SavePixels", Integer.toString(test));
-	}
-
+	
 	static String saveBitmap(Bitmap bitmap, String dir, String baseName) {
 		try {
 			File sdcard = Environment.getExternalStorageDirectory();
